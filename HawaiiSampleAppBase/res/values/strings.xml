@@ -1,0 +1,16 @@
+<resources>
+
+    <string name="app_name">HawaiiSampleAppBase</string>
+    <string name="menu_settings">Settings</string>    
+    <string name="hawaii_ADM_client_ID"></string>
+    <string name="hawaii_ADM_client_secret"></string>
+    <string name="hawaii_ADM_service_scope">http://api.hawaii-services.net/</string>
+    <string name="hawaii_authentication_type">ADM</string>
+    <string name="error_missing_authentication_type">missing authentication type</string>
+    <string name="error_missing_authentication_value">Hawaii credential is missing. Please consult the "Hawaii Installation Guide" on how to obtain credentials.</string>
+    <string name="configuration_error_title">Error</string>
+    <string name="error_missing_key_field">missing key field</string>
+    <string name="error_missing_network_connection">missing network connection</string>
+    <string name="hawaii_GUID_app_ID">f03cc095-df73-4f78-b77c-8cbde17e6d2c</string>
+
+</resources>

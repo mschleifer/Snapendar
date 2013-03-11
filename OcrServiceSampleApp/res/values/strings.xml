@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">Ocr Service</string>
+    <string name="menu_settings">Settings</string>
+    <string name="loadimage_button_title">Load</string>
+    <string name="captureimage_button_title">Capture</string>
+    <string name="recognize_button_title">Recognize</string>
+    <string name="ocrresult_title">OCR result: </string>
+
+</resources>
