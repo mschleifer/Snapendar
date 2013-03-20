@@ -26,6 +26,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+//TODO: Make it so that when the screen is rotated the activity doesn't reset
+//TODO: Need to save data across the "Activity Lifetime Cycle" i.e onCreate/onDestroy
+//TODO: http://developer.android.com/guide/topics/resources/runtime-changes.html
+
 public class MainActivity extends HawaiiBaseAuthActivity {
 	private static final int CAMERA_REQUEST = 1888;
 	private static final int SELECT_IMAGE = 2888;
@@ -82,7 +86,8 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			}
 		});
 
-		// load default image from resource file
+		//TODO: Don't load Chinese characters
+		//TODO: Maybe jump right to the camera
 		this.imageView.setImageResource(R.drawable.welcome);
 	}
 
