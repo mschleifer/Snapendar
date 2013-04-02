@@ -45,6 +45,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	/* Class variable to represent the "photo" captured by the camera */
 	private Bitmap photo = null;
 
+	/* Task for calling the Project Hawaii OCR to keep it off the main thread */
 	private AsyncTask<Void, Integer, AlertDialog.Builder> currentOcrTask;
 
 	@Override
