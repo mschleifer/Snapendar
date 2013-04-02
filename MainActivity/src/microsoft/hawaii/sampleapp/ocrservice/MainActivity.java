@@ -2,6 +2,7 @@ package microsoft.hawaii.sampleapp.ocrservice;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 
 import microsoft.hawaii.hawaiiClientLibraryBase.Listeners.OnCompleteListener;
@@ -19,6 +20,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.CalendarContract;
+import android.provider.CalendarContract.Events;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.View;
@@ -95,6 +98,29 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 						Intent.ACTION_PICK,
 						android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 				startActivityForResult(loadPicture, SELECT_IMAGE);
+			}
+		});
+		
+		/* First-run test code for adding a new event to the calendar. May want to 
+		 * write our own calendar insertion code instead of using an Intent. Needed
+		 * to change the Min Android version to 4.0 for this to work. */
+		Button testCal = (Button) this.findViewById(R.id.testCal_button);
+		testCal.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				/* Set up a calendar event to be added */
+				Calendar beginTime = Calendar.getInstance();
+				beginTime.set(2013, 3, 20, 11, 11);
+				Calendar endTime = Calendar.getInstance();
+				endTime.set(2012, 3, 20, 2, 22);
+				Intent intent = new Intent(Intent.ACTION_INSERT)
+				        .setData(Events.CONTENT_URI)
+				        .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTime.getTimeInMillis())
+				        .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime.getTimeInMillis())
+				        .putExtra(Events.TITLE, "NewSnapendarEvent")
+				        .putExtra(Events.DESCRIPTION, "Super cool thing")
+				        .putExtra(Events.EVENT_LOCATION, "CS 1240")
+				        .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
+				startActivity(intent);
 			}
 		});
 
