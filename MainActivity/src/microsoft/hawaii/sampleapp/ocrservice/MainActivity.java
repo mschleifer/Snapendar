@@ -98,9 +98,8 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			}
 		});
 
-		//TODO: Don't load Chinese characters
-		//TODO: Maybe jump right to the camera
 		
+		//TODO: Maybe jump right to the camera
 		/* If the user has taken/selected a photo we load that to the screen; otherwise WELCOME */
 		if(photo == null) {
 			this.imageView.setImageResource(R.drawable.welcome);
