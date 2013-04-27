@@ -3,7 +3,11 @@ package microsoft.hawaii.sampleapp.ocrservice;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
+import com.mdimension.jchronic.Chronic;
+import com.mdimension.jchronic.utils.Span;
 
 import microsoft.hawaii.hawaiiClientLibraryBase.Listeners.OnCompleteListener;
 import microsoft.hawaii.hawaiiClientLibraryBase.Util.Utility;
@@ -23,6 +27,8 @@ import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
 import android.provider.MediaStore;
+import android.text.format.Time;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -38,12 +44,20 @@ import android.widget.TextView;
 public class MainActivity extends HawaiiBaseAuthActivity {
 	private static final int CAMERA_REQUEST = 1888;
 	private static final int SELECT_IMAGE = 2888;
+	public static Time datetime = new android.text.format.Time(Time.getCurrentTimezone());
+	private static String logtag = "TEST";
 
 	private ImageView imageView;
 	private Button recognizeButton;
 	private ProgressBar progressBar;
 	private LinearLayout resultContainer;
 	private TextView ocrResultView;
+	private Button testInfoButton;
+	
+	public Span d = Chronic.parse("TUESDAY");
+
+	
+	StringManipulation strmanip = new StringManipulation();
 	
 	/* Class variable to represent the "photo" captured by the camera */
 	private Bitmap photo = null;
@@ -60,13 +74,18 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		datetime.setToNow();
+		
+		Log.v(logtag,  String.valueOf(datetime.year));
+		Log.v(logtag, d.getBeginCalendar().toString());
 		/* Setup all the class members from the view objects*/
 		this.progressBar = (ProgressBar) this
 				.findViewById(R.id.ocr_progressbar);
 		this.imageView = (ImageView) this.findViewById(R.id.imageView);
 		this.recognizeButton = (Button) this
 				.findViewById(R.id.recognize_button);
+		this.testInfoButton = (Button) this.findViewById(R.id.testinfobtn);
+		
 		this.resultContainer = (LinearLayout) this
 				.findViewById(R.id.ocr_result_container);
 		this.ocrResultView = (TextView) this
@@ -78,6 +97,13 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		this.recognizeButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				onRecognizeButtonClick(v);
+			}
+		});
+		
+		this.testInfoButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				Intent testInty = new Intent(MainActivity.this, InfoActivity.class);
+				startActivity(testInty);
 			}
 		});
 
@@ -128,7 +154,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		//TODO: Maybe jump right to the camera
 		/* If the user has taken/selected a photo we load that to the screen; otherwise WELCOME */
 		if(photo == null) {
-			this.imageView.setImageResource(R.drawable.welcome);
+			this.imageView.setImageResource(R.drawable.example2);
 		}
 		else {
 			this.imageView.setImageBitmap(photo);
@@ -203,6 +229,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 							new OnCompleteListener<OcrServiceResult>() {
 								public void done(OcrServiceResult result) {
 									serviceResult = result;
+									
 								}
 							}, null);
 				} catch (Exception exception) {
@@ -236,6 +263,16 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 						String ocrResult = resultList.get(0).getText();
 						if (!Utility.isStringNullOrEmpty(ocrResult)) {
 							ocrResultView.setText(ocrResult);
+							d = Chronic.parse(ocrResult);
+							Date t = d.getBeginCalendar().getTime();
+							ocrResultView.setText("Year: " + d.getBeginCalendar().YEAR
+									+ "\n" +
+									"Month: " + d.getBeginCalendar().getTime()
+									+ "\n" +
+									"Day: " + d.getBeginCalendar().DAY_OF_WEEK
+									
+									);
+							
 						} else {
 							thisActivity.showErrorMessage(
 									"Couldn't recognize the specified image",
