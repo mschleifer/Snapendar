@@ -6,15 +6,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import com.mdimension.jchronic.Chronic;
-import com.mdimension.jchronic.utils.Span;
-
 import microsoft.hawaii.hawaiiClientLibraryBase.Listeners.OnCompleteListener;
 import microsoft.hawaii.hawaiiClientLibraryBase.Util.Utility;
 import microsoft.hawaii.sampleappbase.HawaiiBaseAuthActivity;
 import microsoft.hawaii.sdk.OcrService.OcrService;
 import microsoft.hawaii.sdk.OcrService.ServiceContracts.OcrServiceResult;
 import microsoft.hawaii.sdk.OcrService.ServiceContracts.OcrText;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -27,15 +25,19 @@ import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
 import android.provider.MediaStore;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.text.format.Time;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.*;
+
+import com.mdimension.jchronic.Chronic;
+import com.mdimension.jchronic.utils.Span;
 
 //TODO: Make it so that when the screen is rotated the activity doesn't reset
 //TODO: Need to save data across the "Activity Lifetime Cycle" i.e onCreate/onDestroy
@@ -44,9 +46,9 @@ import android.widget.TextView;
 public class MainActivity extends HawaiiBaseAuthActivity {
 	private static final int CAMERA_REQUEST = 1888;
 	private static final int SELECT_IMAGE = 2888;
-	public static Time datetime = new android.text.format.Time(Time.getCurrentTimezone());
+	
 	private static String logtag = "TEST";
-
+	private android.text.format.Time datetime = new Time();
 	private ImageView imageView;
 	private Button recognizeButton;
 	private ProgressBar progressBar;
