@@ -133,7 +133,9 @@ public class Chronic {
    */
   protected static String preNormalize(String text) {
     String normalizedText = text.toLowerCase();
-    normalizedText = Chronic.numericizeNumbers(normalizedText);
+    /* Below line was inserting a bunch of "null" into the text; removing it seems to help our 
+     * app, but likely limits some functionality of the library */
+    //normalizedText = Chronic.numericizeNumbers(normalizedText);
     normalizedText = normalizedText.replaceAll("['\"\\.]", "");
     normalizedText = normalizedText.replaceAll("([/\\-,@])", " $1 ");
     normalizedText = normalizedText.replaceAll("\\btoday\\b", "this day");

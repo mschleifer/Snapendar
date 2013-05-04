@@ -8,32 +8,37 @@
     <LinearLayout 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:background="#FFFFFF">
 
     <Button
         android:id="@+id/loadImage_button"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/loadimage_button_title" />
     
     <Button
         android:id="@+id/captureimage_button"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/captureimage_button_title" />
     
     <Button
         android:id="@+id/recognize_button"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/recognize_button_title" />
 
     <Button
         android:id="@+id/testCal_button"
-        style="?android:attr/buttonStyleSmall"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Test" />
+        android:text="Set Event"
+        android:visibility="gone" />
     
     </LinearLayout>
     
@@ -52,14 +57,16 @@
         	android:layout_width="0dip"
         	android:layout_height="wrap_content"
         	android:layout_marginLeft="10dp"
-        	android:layout_weight="2"/>
+        	android:layout_weight="2"
+        	android:textIsSelectable="true"/>
     </LinearLayout>
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:contentDescription="Selected Image" />
     
     <ProgressBar
         android:id="@+id/ocr_progressbar"
