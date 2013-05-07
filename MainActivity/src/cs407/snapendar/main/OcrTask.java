@@ -106,7 +106,7 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 						thisActivity.ocrResultView.setText("Year: " + thisActivity.chronicCalendar.get(Calendar.YEAR) + 
 								"\nMonth: " + (thisActivity.chronicCalendar.get(Calendar.MONTH)+1) +
 								"\nDay: " + thisActivity.chronicCalendar.get(Calendar.DAY_OF_MONTH));
-						thisActivity.recognizeButton.setVisibility(View.GONE);
+					
 						thisActivity.setEventButton.setVisibility(View.VISIBLE);
 					}
 					else {
@@ -121,7 +121,6 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 			}
 		}
 
-		thisActivity.recognizeButton.setEnabled(true);
 		thisActivity.progressBar.setVisibility(View.GONE);
 		thisActivity.imageView.setVisibility(View.VISIBLE);
 		thisActivity.currentOcrTask = null;

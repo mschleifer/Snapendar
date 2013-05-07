@@ -1,8 +1,10 @@
 package cs407.snapendar.main;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Calendar;
 
 
@@ -13,6 +15,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
@@ -52,12 +55,13 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	protected ProgressBar progressBar;
 	protected LinearLayout resultContainer;
 	protected TextView ocrResultView;
+	protected SurfaceView camSurface;
 	
-	protected Button recognizeButton;
 	protected Button loadButton;
 	protected Button captureButton;
 	protected Button setEventButton;
 	protected Button testInfoButton;
+	
 	
 	Preview preview;
 	Button shutterButton;
@@ -85,12 +89,14 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		//setContentView(R.layout.activity_main);
 		setContentView(R.layout.activity_main);
 		
+		camSurface = (SurfaceView)findViewById(R.id.surfaceView);
+		
 		/* Setup all the class members from the view objects*/
 		this.progressBar = (ProgressBar) this
 				.findViewById(R.id.ocr_progressbar);
 		this.imageView = (ImageView) this.findViewById(R.id.imageView);
 		
-		this.recognizeButton = (Button) this.findViewById(R.id.RecognizeBtn);
+		//this.recognizeButton = (Button) this.findViewById(R.id.RecognizeBtn);
 		//this.testInfoButton = (Button) this.findViewById(R.id.testinfobtn);
 		this.shutterButton = (Button) this.findViewById(R.id.CaptureImgBtn);
 		this.loadButton = (Button) this.findViewById(R.id.LoadImgBtn);
@@ -104,11 +110,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		this.ocrResultView.setTextSize(25);
 
 		/* Setup the OnClickListeners for each button of the UI */
-		this.recognizeButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				onRecognizeButtonClick(v);
-			}
-		});
+	
 		/*
 		this.testInfoButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -170,19 +172,15 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		act = this;
 		//requestWindowFeature(Window.FEATURE_NO_TITLE); //Removes title bar at top
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
 		
 		preview = new Preview(this, (SurfaceView)findViewById(R.id.surfaceView));
 		preview.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 		((FrameLayout) findViewById(R.id.preview)).addView(preview);
 		preview.setKeepScreenOn(true);
 		
-	
-		
 		shutterButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				//				preview.camera.takePicture(shutterCallback, rawCallback, jpegCallback);
-			//	camera.takePicture(shutterCallback, rawCallback, jpegCallback);
+				camera.takePicture(shutterCallback, rawCallback, jpegCallback);
 			}
 		});
 		
@@ -192,7 +190,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				camera.autoFocus(new AutoFocusCallback(){
 					@Override
 					public void onAutoFocus(boolean arg0, Camera arg1) {
-						//camera.takePicture(shutterCallback, rawCallback, jpegCallback);
+						camera.takePicture(shutterCallback, rawCallback, jpegCallback);
 					}
 				});
 				return true;
@@ -233,7 +231,8 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
+		
+		ocrResultView.setText("Loading Image...");
 		// If our Intent calls were a great success
 		if (resultCode == Activity.RESULT_OK && data != null) {
 			if (requestCode == CAMERA_REQUEST) {
@@ -243,6 +242,8 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			else if (requestCode == SELECT_IMAGE) {
 				// This gets the URI of the image the user selected
 				Uri imgUri = data.getData();
+				
+			
 				this.imageView.setImageURI(imgUri);
 				
 				/* Convert the URI to a Bitmap we can store; may break if 
@@ -254,18 +255,22 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 					ex.printStackTrace();
 				}
 			}
-			/* Hide the result container if it was visible from a previous OCR call */
-			this.resultContainer.setVisibility(View.GONE);
+			// Hide the result container if it was visible from a previous OCR call
+			//resultContainer.setVisibility(View.GONE);
+			
+			beginOcr();
 			
 			/* Reset the recognize/visible button to show recognize */
-			recognizeButton.setVisibility(View.VISIBLE);
-			setEventButton.setVisibility(View.GONE);
+			//	setEventButton.setVisibility(View.GONE);
 		}
 	}
-
-	private void onRecognizeButtonClick(View v) {
-		this.recognizeButton.setEnabled(false);
+	
+	public void beginOcr(){
+		imageView.setVisibility(View.VISIBLE); //Make the image view visible.
 		
+		resultContainer.setVisibility(View.VISIBLE); 
+		
+		camSurface.setVisibility(View.GONE);
 		currentOcrTask = new OcrTask(this);
 		currentOcrTask.execute();
 	}
@@ -284,7 +289,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		
 		camera = Camera.open();
 		preview.setCamera(camera);
-		Log.v("CAM", "HELLEOROROASD");
+	//	Log.v("CAM", "HELLEOROROASD");
 		camera.startPreview(); //Crashes on this line
 	
 	}
@@ -317,7 +322,14 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				outStream.write(data);
 				outStream.close();
 				Log.d("snap", "onPictureTaken - wrote bytes: " + data.length);
-
+				
+				InputStream is = new ByteArrayInputStream(data);
+				Bitmap bmp = BitmapFactory.decodeStream(is);
+			
+				imageView.setImageBitmap(bmp);
+				beginOcr();
+				
+				
 				resetCam();
 
 			} catch (FileNotFoundException e) {
