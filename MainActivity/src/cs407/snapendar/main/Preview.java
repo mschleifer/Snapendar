@@ -30,7 +30,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         super(context);
 
         mSurfaceView = sv;
-//        addView(mSurfaceView);
+        //addView(mSurfaceView);
        
         mHolder = mSurfaceView.getHolder();
         mHolder.addCallback(this);

@@ -5,69 +5,91 @@
     android:measureWithLargestChild="true"
     android:orientation="vertical" >
 
-    <LinearLayout 
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#FFFFFF">
+        android:background="#FFFFFF"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
 
-    <Button
-        android:id="@+id/loadImage_button"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/loadimage_button_title" />
-    
-    <Button
-        android:id="@+id/captureimage_button"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/captureimage_button_title" />
-    
-    <Button
-        android:id="@+id/recognize_button"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/recognize_button_title" />
+        <Button
+            android:id="@+id/LoadImgBtn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loadimage_button_title" />
 
-    <Button
-        android:id="@+id/testCal_button"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Set Event"
-        android:visibility="gone" />
-    
+        <Button
+            android:id="@+id/RecognizeBtn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/recognize_button_title" />
+
+        <Button
+            android:id="@+id/CaptureImgBtn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/captureimage_button_title" />
+
+        <Button
+            android:id="@+id/SnapItBtn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Snapit" />
+
+        <Button
+            android:id="@+id/testCal_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set Event"
+            android:visibility="gone" />
     </LinearLayout>
-    
+
     <LinearLayout
         android:id="@+id/ocr_result_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:visibility="gone">
-        <TextView 
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:text="@string/ocrresult_title" />
-    	<TextView
-    	    android:id="@+id/ocrResult_textview"
-        	android:layout_width="0dip"
-        	android:layout_height="wrap_content"
-        	android:layout_marginLeft="10dp"
-        	android:layout_weight="2"
-        	android:textIsSelectable="true"/>
+        android:visibility="visible" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ocrresult_title" />
+
+        <TextView
+            android:id="@+id/ocrResult_textview"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="2"
+            android:textIsSelectable="true" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
+        android:layout_height="115dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.54"
         android:contentDescription="Selected Image" />
-    
+
+    <FrameLayout
+        android:id="@+id/preview"
+        android:layout_width="fill_parent"
+        android:layout_height="198dp"
+        android:layout_weight="0.46" >
+
+        <SurfaceView
+            android:id="@+id/surfaceView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+
     <ProgressBar
         android:id="@+id/ocr_progressbar"
         style="?android:attr/progressBarStyleLarge"
@@ -78,13 +100,11 @@
         android:gravity="center_vertical|center_horizontal"
         android:visibility="gone" />
 
-    <Button
-        android:id="@+id/testinfobtn"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical|center_horizontal|bottom"
-        android:text="Testing Activity" 
-        android:onClick="testInfo"
-        />
+        android:layout_gravity="center_horizontal|bottom"
+        android:gravity="center" >
+    </LinearLayout>
 
 </LinearLayout>

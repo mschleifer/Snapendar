@@ -1,24 +1,40 @@
 package cs407.snapendar.main;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
+
 
 import cs407.snapendar.main.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
+import android.hardware.Camera.PictureCallback;
+import android.hardware.Camera.ShutterCallback;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
+import android.view.SurfaceView;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -42,6 +58,13 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	protected Button captureButton;
 	protected Button setEventButton;
 	protected Button testInfoButton;
+	
+	Preview preview;
+	Button shutterButton;
+	Camera camera;
+	String fileName;
+	Activity act;
+	Context ctx;
 
 	protected Calendar chronicCalendar;
 	
@@ -59,6 +82,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		}
 		
 		super.onCreate(savedInstanceState);
+		//setContentView(R.layout.activity_main);
 		setContentView(R.layout.activity_main);
 		
 		/* Setup all the class members from the view objects*/
@@ -66,11 +90,11 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				.findViewById(R.id.ocr_progressbar);
 		this.imageView = (ImageView) this.findViewById(R.id.imageView);
 		
-		this.recognizeButton = (Button) this.findViewById(R.id.recognize_button);
-		this.testInfoButton = (Button) this.findViewById(R.id.testinfobtn);
-		this.captureButton = (Button) this.findViewById(R.id.captureimage_button);
-		this.loadButton = (Button) this.findViewById(R.id.loadImage_button);
-		this.setEventButton= (Button) this.findViewById(R.id.testCal_button);
+		this.recognizeButton = (Button) this.findViewById(R.id.RecognizeBtn);
+		//this.testInfoButton = (Button) this.findViewById(R.id.testinfobtn);
+		this.shutterButton = (Button) this.findViewById(R.id.CaptureImgBtn);
+		this.loadButton = (Button) this.findViewById(R.id.LoadImgBtn);
+		//this.setEventButton= (Button) this.findViewById(R.id.testCal_button);
 		
 		this.resultContainer = (LinearLayout) this
 				.findViewById(R.id.ocr_result_container);
@@ -85,15 +109,15 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				onRecognizeButtonClick(v);
 			}
 		});
-		
+		/*
 		this.testInfoButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				Intent testInty = new Intent(MainActivity.this, InfoActivity.class);
 				startActivity(testInty);
 			}
-		});
+		});*/
 
-		 this.captureButton.setOnClickListener(new View.OnClickListener() {
+		 this.shutterButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				Intent cameraIntent = new Intent(
 						android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -114,6 +138,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		/* First-run test code for adding a new event to the calendar. May want to 
 		 * write our own calendar insertion code instead of using an Intent. Needed
 		 * to change the Min Android version to 4.0 for this to work. */
+		/*
 		this.setEventButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				if(chronicCalendar != null) {
@@ -129,7 +154,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				// TODO: Might want to throw a pop-up/error or something here
 			}
 		});
-
+		 */
 		
 		/* If the user has taken/selected a photo we load that to the screen; otherwise WELCOME */
 		if(photo == null) {
@@ -138,6 +163,43 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		else {
 			this.imageView.setImageBitmap(photo);
 		}
+		
+		
+		
+		ctx = this;
+		act = this;
+		//requestWindowFeature(Window.FEATURE_NO_TITLE); //Removes title bar at top
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+		
+		preview = new Preview(this, (SurfaceView)findViewById(R.id.surfaceView));
+		preview.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+		((FrameLayout) findViewById(R.id.preview)).addView(preview);
+		preview.setKeepScreenOn(true);
+		
+	
+		
+		shutterButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				//				preview.camera.takePicture(shutterCallback, rawCallback, jpegCallback);
+			//	camera.takePicture(shutterCallback, rawCallback, jpegCallback);
+			}
+		});
+		
+		shutterButton.setOnLongClickListener(new OnLongClickListener(){
+			@Override
+			public boolean onLongClick(View arg0) {
+				camera.autoFocus(new AutoFocusCallback(){
+					@Override
+					public void onAutoFocus(boolean arg0, Camera arg1) {
+						//camera.takePicture(shutterCallback, rawCallback, jpegCallback);
+					}
+				});
+				return true;
+			}
+		});
+		
+		
 	}
 
 	@Override
@@ -150,6 +212,13 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		if (task != null) {
 			task.cancel(true);
 			this.currentOcrTask = null;
+		}
+		
+		if(camera != null) {
+			camera.stopPreview();
+			preview.setCamera(null);
+			camera.release();
+			camera = null;
 		}
 	}
 	
@@ -206,4 +275,58 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		//preview.mCamera = Camera.open();
+		
+		camera = Camera.open();
+		preview.setCamera(camera);
+		Log.v("CAM", "HELLEOROROASD");
+		camera.startPreview(); //Crashes on this line
+	
+	}
+
+
+	private void resetCam() {
+		camera.startPreview();
+		preview.setCamera(camera);
+	}
+
+	ShutterCallback shutterCallback = new ShutterCallback() {
+		public void onShutter() {
+			// Log.d(TAG, "onShutter'd");
+		}
+	};
+
+	PictureCallback rawCallback = new PictureCallback() {
+		public void onPictureTaken(byte[] data, Camera camera) {
+			// Log.d(TAG, "onPictureTaken - raw");
+		}
+	};
+
+	PictureCallback jpegCallback = new PictureCallback() {
+		public void onPictureTaken(byte[] data, Camera camera) {
+			FileOutputStream outStream = null;
+			try {
+				// Write to SD Card
+				fileName = String.format("/sdcard/camtest/%d.jpg", System.currentTimeMillis());
+				outStream = new FileOutputStream(fileName);
+				outStream.write(data);
+				outStream.close();
+				Log.d("snap", "onPictureTaken - wrote bytes: " + data.length);
+
+				resetCam();
+
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+			}
+			Log.d("snap", "onPictureTaken - jpeg");
+		}
+	};
 }
