@@ -30,6 +30,14 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 	{
 		thisActivity = a;
 	}
+	
+	protected void onPreExecute() {
+		// TODO: Set all this stuff up in MainActivity in the beginOCR() call
+		thisActivity.resultContainer.setVisibility(View.GONE);
+		thisActivity.progressBar.setVisibility(View.VISIBLE);
+		thisActivity.ocrResultView.setText("");
+		thisActivity.imageView.setVisibility(View.GONE);
+	}
 
 	protected AlertDialog.Builder doInBackground(Void... listTypes) {
 		// get image from ImageView
@@ -82,13 +90,6 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 		return null;
 	}
 
-	protected void onPreExecute() {
-		thisActivity.resultContainer.setVisibility(View.GONE);
-		thisActivity.progressBar.setVisibility(View.VISIBLE);
-		thisActivity.ocrResultView.setText("");
-		thisActivity.imageView.setVisibility(View.GONE);
-	}
-
 	protected void onPostExecute(AlertDialog.Builder dialogBuilder) {
 		if (dialogBuilder != null) {
 			thisActivity.showErrorMessage(dialogBuilder);
@@ -106,8 +107,6 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 						thisActivity.ocrResultView.setText("Year: " + thisActivity.chronicCalendar.get(Calendar.YEAR) + 
 								"\nMonth: " + (thisActivity.chronicCalendar.get(Calendar.MONTH)+1) +
 								"\nDay: " + thisActivity.chronicCalendar.get(Calendar.DAY_OF_MONTH));
-					
-						thisActivity.setEventButton.setVisibility(View.VISIBLE);
 					}
 					else {
 						thisActivity.showErrorMessage("Couldn't parse a date from specified image",
