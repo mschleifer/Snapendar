@@ -16,7 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
@@ -31,7 +30,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -43,12 +41,12 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-//TODO: Make it so that when the screen is rotated the activity doesn't reset
+//TODO: Make it so that when the screen is rotated we stay in the same state (i.e. with camera,
+//TODO: with picture, etc.)
 //TODO: Need to save data across the "Activity Lifetime Cycle" i.e onCreate/onDestroy
 //TODO: http://developer.android.com/guide/topics/resources/runtime-changes.html
 
 public class MainActivity extends HawaiiBaseAuthActivity {
-	private static final int CAMERA_REQUEST = 1888;
 	private static final int SELECT_IMAGE = 2888;
 
 	protected ImageView imageView;
@@ -113,10 +111,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 
 		this.captureButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				/*Intent cameraIntent = new Intent(
-						android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-				startActivityForResult(cameraIntent, CAMERA_REQUEST);*/
-				
 				captureButton.setVisibility(View.GONE);
 				imageView.setVisibility(View.GONE);
 				resultContainer.setVisibility(View.GONE);
@@ -232,17 +226,14 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 					ex.printStackTrace();
 				}
 			}
-			shutterButton.setVisibility(View.GONE);
-			captureButton.setVisibility(View.VISIBLE);
 
 			beginOcr();
-
-			/* Reset the recognize/visible button to show recognize */
-			//	setEventButton.setVisibility(View.GONE);
 		}
 	}
 
 	public void beginOcr(){
+		shutterButton.setVisibility(View.GONE);
+		captureButton.setVisibility(View.VISIBLE);
 		camSurface.setVisibility(View.GONE);
 		imageView.setVisibility(View.VISIBLE); //Make the image view visible.
 		resultContainer.setVisibility(View.VISIBLE); 
@@ -289,10 +280,17 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	};
 
 	PictureCallback jpegCallback = new PictureCallback() {
+		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
 			FileOutputStream outStream = null;
 			try {
-				// Write to SD Card
+				// Write to External Storage
+				// TODO: Use a non-hardcoded path; also, check if external storage is available
+				// TODO: http://developer.android.com/guide/topics/data/data-storage.html#filesExternal
+				// File path = Environment.getExternalStoragePublicDirectory(
+	            // 		Environment.DIRECTORY_PICTURES);
+	            // File file = new File(path, "DemoPicture.jpg");
+
 				fileName = String.format("/sdcard/camtest/%d.jpg", System.currentTimeMillis());
 				outStream = new FileOutputStream(fileName);
 				outStream.write(data);

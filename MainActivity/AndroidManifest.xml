@@ -6,24 +6,21 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="16" />
-    
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <uses-feature android:name="android.hardware.camera" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    
-    
-    
     <application
+        android:name="cs407.snapendar.main.OcrApplication"
+        android:debuggable="true"
         android:icon="@drawable/snapendar_icon"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:name="cs407.snapendar.main.OcrApplication"
-        android:debuggable="true">
+        android:theme="@style/AppTheme" >
         <activity
             android:name="cs407.snapendar.main.MainActivity"
             android:label="@string/app_name" >
@@ -32,7 +29,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="InfoActivity"></activity>
+        <activity android:name="InfoActivity" >
+        </activity>
     </application>
 
 </manifest>
