@@ -258,9 +258,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		camera = Camera.open();
 		preview.setCamera(camera);
 		//	Log.v("CAM", "HELLEOROROASD");
-		
-		camera = Camera.open();
-		preview.setCamera(camera);
 
 		camera.startPreview(); //Crashes on this line
 
