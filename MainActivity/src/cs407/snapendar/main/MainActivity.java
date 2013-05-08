@@ -251,12 +251,19 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+<<<<<<< HEAD
 
 		//preview.mCamera = Camera.open();
 
 		camera = Camera.open();
 		preview.setCamera(camera);
 		//	Log.v("CAM", "HELLEOROROASD");
+=======
+		
+		camera = Camera.open();
+		preview.setCamera(camera);
+
+>>>>>>> Resyncing
 		camera.startPreview(); //Crashes on this line
 
 	}
