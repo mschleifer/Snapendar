@@ -252,7 +252,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	protected void onResume() {
 		super.onResume();
 
-
 		//preview.mCamera = Camera.open();
 
 		camera = Camera.open();
