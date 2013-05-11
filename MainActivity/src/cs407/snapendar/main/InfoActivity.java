@@ -1,13 +1,17 @@
 package cs407.snapendar.main;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 
 import cs407.snapendar.main.R;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -24,19 +28,39 @@ public class InfoActivity extends Activity {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.activity_info);
 
+	    File sdCard = Environment.getExternalStorageDirectory();
+	    File dir = new File (sdCard.getAbsolutePath() + "/snapendar");
+	    dir.mkdirs();
+	   
+	    /*
+	    Test code for writing to the directory. Works.
+	    File file = new File(dir, "test.txt");
+
+	    FileOutputStream f;
+		try {
+			f = new FileOutputStream(file);
+			  f.flush();
+			  f.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	    
-	    File[] file = Environment.getExternalStorageDirectory().listFiles(new FilenameFilter() {
+	    //http://developer.android.com/reference/android/os/Environment.html
+		
+	    File[] files = Environment.getExternalStorageDirectory().listFiles(new FilenameFilter() {
 
             @Override
             public boolean accept(File dir, String filename) {
 
-                return filename.contains(".png");
+                return true; //filename.contains(".png");
             }
         });
-	   
-	    
-	    
-	    
+	     */
+
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	    
 	    Button finishBtn = (Button) this.findViewById(R.id.BackBtn);
@@ -57,22 +81,16 @@ public class InfoActivity extends Activity {
 	   listOfDates.setPadding(55, 55, 55, 55);
 	   rootElement.addView(listOfDates);
 	   
+	   String[] snaps = dir.list();
 	   
-	   int numSnaps = 10; //Hardcoded for now
+	  // Log.v("info", "Files" + snaps.length);
 	   
-	   
-	    for (int x = 0; x < file.length; x++){
-	    	
-	    	
-		   TextView newView = new TextView(this);
-		   newView.setWidth(3000);
-		   newView.setLayoutParams(new TableRow.LayoutParams(200,100));
-		   newView.setText(file[x].getName());
-		   //newView.setWidth(Layout.)
-		   listOfDates.addView(newView);
-	   }
+	    for (int x = 0; x < snaps.length; x++){
 
-	   
-	   
+		   TextView newView = new TextView(this);
+		   newView.setLayoutParams(new TableRow.LayoutParams(200,100));
+		   newView.setText(snaps[x]);
+		   listOfDates.addView(newView);
+	   }   
 	}
 }
