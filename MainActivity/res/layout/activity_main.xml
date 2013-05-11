@@ -35,13 +35,6 @@
             android:text="Events" />
 
         <Button
-            android:id="@+id/SnapItBtn"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Snapit" />
-
-        <Button
             android:id="@+id/testCal_button"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
@@ -98,6 +91,21 @@
             android:id="@+id/surfaceView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+        
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal" >
+
+            <Button
+                android:id="@+id/SnapItBtn"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Snap" />
+
+    </LinearLayout>
     </FrameLayout>
 
     <ProgressBar

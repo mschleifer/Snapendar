@@ -32,9 +32,9 @@ public class InfoActivity extends Activity {
 	    File dir = new File (sdCard.getAbsolutePath() + "/snapendar");
 	    dir.mkdirs();
 	   
-	    /*
-	    Test code for writing to the directory. Works.
-	    File file = new File(dir, "test.txt");
+	   
+	   // Test code for writing to the directory. Works.
+	    File file = new File(dir, "testFile.txt");
 
 	    FileOutputStream f;
 		try {
@@ -50,7 +50,7 @@ public class InfoActivity extends Activity {
 		}
 	    
 	    //http://developer.android.com/reference/android/os/Environment.html
-		
+		 /*
 	    File[] files = Environment.getExternalStorageDirectory().listFiles(new FilenameFilter() {
 
             @Override
