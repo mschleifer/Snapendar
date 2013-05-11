@@ -39,6 +39,11 @@ public class Storage {
 		
 	}
 	
+	//Is the SDcard mounted?
+	public boolean storageAccessible(){
+		 return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+	}
+	
 	public String[] getSnaps(){
 	    File dir = new File (sdCard.getAbsolutePath() + "/snapendar");
 	    return dir.list();

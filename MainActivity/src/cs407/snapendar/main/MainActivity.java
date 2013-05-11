@@ -93,7 +93,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		
 		boolean hasRunBefore = storage.snapendarDirectoryExisted();
 		if(!hasRunBefore){
-			pushHelpToast();
+			pushToast(getString(R.string.helptext));
 		}
 
 		/* Setup all the class members from the view objects*/
@@ -125,17 +125,21 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			
 		this.helpButton.setOnClickListener(new View.OnClickListener(){
 			public void onClick(View v){
-				pushHelpToast();
+				pushToast(getString(R.string.helptext));
 			}
 		});
 	
 		this.savedButton.setOnClickListener(new View.OnClickListener(){
 			public void onClick(View v){
 				//Loading "Gallery" activity for testing
+				
+				if(storage.storageAccessible()){
 				Intent intent = new Intent(v.getContext(), InfoActivity.class);
 		        startActivity(intent);      
-		      //  finish();
-				
+				}
+				else{
+					pushToast("Storage isn't accessible.");
+				}
 			}
 		});
 
@@ -250,8 +254,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		}
 	}
 	
-	public void pushHelpToast(){
-		CharSequence text = getString(R.string.helptext);
+	public void pushToast(String text){
 		int duration = Toast.LENGTH_SHORT;
 
 		Toast toast = Toast.makeText(getApplicationContext(), text, duration);
@@ -259,6 +262,10 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 
 		toast.show();
 	}
+	
+	
+	
+	
 
 	public void beginOcr(){
 		shutterButton.setVisibility(View.GONE);
