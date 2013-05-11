@@ -27,28 +27,8 @@ public class InfoActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.activity_info);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-	    File sdCard = Environment.getExternalStorageDirectory();
-	    File dir = new File (sdCard.getAbsolutePath() + "/snapendar");
-	    dir.mkdirs();
-	   
-	   
-	   // Test code for writing to the directory. Works.
-	    File file = new File(dir, "testFile.txt");
-
-	    FileOutputStream f;
-		try {
-			f = new FileOutputStream(file);
-			  f.flush();
-			  f.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    
 	    //http://developer.android.com/reference/android/os/Environment.html
 		 /*
 	    File[] files = Environment.getExternalStorageDirectory().listFiles(new FilenameFilter() {
@@ -61,8 +41,8 @@ public class InfoActivity extends Activity {
         });
 	     */
 
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-	    
+
+	   
 	    Button finishBtn = (Button) this.findViewById(R.id.BackBtn);
 	    
 	    finishBtn.setOnClickListener(new View.OnClickListener() {
@@ -75,13 +55,12 @@ public class InfoActivity extends Activity {
 	    //Open saved photo directory, get all files, get names, sort chronologically
 	    
 	   LinearLayout rootElement  = (LinearLayout) this.findViewById(R.id.listContainer);
-	   
 	   LinearLayout listOfDates = new LinearLayout(this);
 	   listOfDates.setOrientation(LinearLayout.VERTICAL);
 	   listOfDates.setPadding(55, 55, 55, 55);
 	   rootElement.addView(listOfDates);
 	   
-	   String[] snaps = dir.list();
+	   String[] snaps = MainActivity.storage.getSnaps();
 	   
 	  // Log.v("info", "Files" + snaps.length);
 	   

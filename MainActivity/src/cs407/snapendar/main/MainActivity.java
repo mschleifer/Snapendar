@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
@@ -49,6 +50,7 @@ import android.widget.Toast;
 
 public class MainActivity extends HawaiiBaseAuthActivity {
 	private static final int SELECT_IMAGE = 2888;
+	public static Storage storage;
 
 	protected ImageView imageView;
 	protected ProgressBar progressBar;
@@ -86,6 +88,12 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		storage = new Storage();
+		
+		boolean hasRunBefore = storage.snapendarDirectoryExisted();
+		if(!hasRunBefore){
+			pushHelpToast();
+		}
 
 		/* Setup all the class members from the view objects*/
 		this.progressBar = (ProgressBar) this.findViewById(R.id.ocr_progressbar);
@@ -113,20 +121,13 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		preview.setKeepScreenOn(true);
 
 		/* Setup the OnClickListeners for each button of the UI */
-
+			
 		this.helpButton.setOnClickListener(new View.OnClickListener(){
 			public void onClick(View v){
-				CharSequence text = getString(R.string.helptext);
-				int duration = Toast.LENGTH_SHORT;
-
-				Toast toast = Toast.makeText(ctx, text, duration);
-				toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 200);
-
-				toast.show();
+				pushHelpToast();
 			}
 		});
 	
-		
 		this.savedButton.setOnClickListener(new View.OnClickListener(){
 			public void onClick(View v){
 				//Loading "Gallery" activity for testing
@@ -247,6 +248,16 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			beginOcr();
 		}
 	}
+	
+	public void pushHelpToast(){
+		CharSequence text = getString(R.string.helptext);
+		int duration = Toast.LENGTH_SHORT;
+
+		Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+		toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 200);
+
+		toast.show();
+	}
 
 	public void beginOcr(){
 		shutterButton.setVisibility(View.GONE);
@@ -270,10 +281,28 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 
 		camera = Camera.open();
 		preview.setCamera(camera);
-		camera.setDisplayOrientation(90);
 		
+		Camera.Parameters parameters=camera.getParameters();
+		
+	    //parameters.setPreviewSize(preview.getWidth(), preview.getHeight());
+	   // camera.setParameters(parameters);
+	    int previewFormat = parameters.getPreviewFormat();
+	    int bitsperpixel = ImageFormat.getBitsPerPixel(previewFormat);
+	  
+	    int byteperpixel = 2;
+	    Log.v("snap", String.valueOf(byteperpixel));
+	    Camera.Size camerasize = parameters.getPreviewSize();
+	    int frame_bytesize = ((preview.getWidth() *preview.getHeight()) * byteperpixel);
+	    //create buffer
+	    byte[] frameBuffer=new byte[frame_bytesize];
+	    //buffer registry 
+	    Log.v("snap", String.valueOf(frameBuffer.length));
+	    camera.addCallbackBuffer(frameBuffer);
+	    
+	    
+
 		if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
-	        camera.setDisplayOrientation(90);
+		    camera.setDisplayOrientation(90);
 	        //lp.height = previewSurfaceHeight;
 	        //lp.width = (int) (previewSurfaceHeight / aspect);
 	    } else {
@@ -298,7 +327,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 
 	PictureCallback rawCallback = new PictureCallback() {
 		public void onPictureTaken(byte[] data, Camera camera) {
-			//Log.d("snap", "onPictureTaken - raw" + data.length);
+			Log.d("snap", "onPictureTaken - raw" + data);
 		}
 	};
 
