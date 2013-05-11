@@ -20,14 +20,6 @@
             android:text="@string/loadimage_button_title" />
 
         <Button
-            android:id="@+id/CaptureImgBtn"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/captureimage_button_title"
-            android:visibility="gone" />
-
-        <Button
             android:id="@+id/SavedSnapsBtn"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
@@ -103,7 +95,9 @@
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Snap" />
+                android:background="@android:color/black"
+                android:text="Snap"
+                android:textColor="@android:color/white" />
 
     </LinearLayout>
     </FrameLayout>

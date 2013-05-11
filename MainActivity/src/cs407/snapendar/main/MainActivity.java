@@ -92,7 +92,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		this.imageView = (ImageView) this.findViewById(R.id.imageView);
 		this.camSurface = (SurfaceView)findViewById(R.id.surfaceView);
 
-		this.captureButton = (Button) this.findViewById(R.id.CaptureImgBtn);
+		//this.captureButton = (Button) this.findViewById(R.id.CaptureImgBtn);
 		this.loadButton = (Button) this.findViewById(R.id.BackBtn);
 		this.shutterButton = (Button) this.findViewById(R.id.SnapItBtn);
 		this.savedButton = (Button) this.findViewById(R.id.SavedSnapsBtn);
@@ -115,15 +115,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 
 		/* Setup the OnClickListeners for each button of the UI */
 
-		this.captureButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				captureButton.setVisibility(View.GONE);
-				imageView.setVisibility(View.GONE);
-				resultContainer.setVisibility(View.GONE);
-				shutterButton.setVisibility(View.VISIBLE);
-				camSurface.setVisibility(View.VISIBLE);
-			}
-		});
+	
 		
 		this.savedButton.setOnClickListener(new View.OnClickListener(){
 			public void onClick(View v){
@@ -249,7 +241,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 
 	public void beginOcr(){
 		shutterButton.setVisibility(View.GONE);
-		captureButton.setVisibility(View.VISIBLE);
+		//captureButton.setVisibility(View.VISIBLE);
 		camSurface.setVisibility(View.GONE);
 		imageView.setVisibility(View.VISIBLE); //Make the image view visible.
 		resultContainer.setVisibility(View.VISIBLE); 
@@ -286,13 +278,13 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 
 	ShutterCallback shutterCallback = new ShutterCallback() {
 		public void onShutter() {
-			// Log.d(TAG, "onShutter'd");
+			Log.d("snap", "onShutter'd");
 		}
 	};
 
 	PictureCallback rawCallback = new PictureCallback() {
 		public void onPictureTaken(byte[] data, Camera camera) {
-			// Log.d(TAG, "onPictureTaken - raw");
+			Log.d("snap", "onPictureTaken - raw" + data.length);
 		}
 	};
 
@@ -313,10 +305,11 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				outStream.write(data);
 				outStream.close();
 				Log.d("snap", "onPictureTaken - wrote bytes: " + data.length);
+				Log.d("snap", "onPictureTaken - jpeg");
 
 				InputStream is = new ByteArrayInputStream(data);
 				Bitmap bmp = BitmapFactory.decodeStream(is);
-
+				
 				imageView.setImageBitmap(bmp);
 				beginOcr();
 
@@ -329,7 +322,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				e.printStackTrace();
 			} finally {
 			}
-			Log.d("snap", "onPictureTaken - jpeg");
 		}
 	};
 }
