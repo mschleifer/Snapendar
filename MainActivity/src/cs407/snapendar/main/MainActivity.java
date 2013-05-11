@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
@@ -23,8 +24,6 @@ import android.hardware.Camera.ShutterCallback;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.CalendarContract;
-import android.provider.CalendarContract.Events;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -61,7 +60,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	protected Button captureButton;
 	protected Button shutterButton;
 	protected Button helpButton;
-	
 
 	Preview preview;
 	Camera camera;
@@ -86,7 +84,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			photo = savedInstanceState.getParcelable("bitmap");
 		}
 				
-
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
@@ -95,7 +92,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		this.imageView = (ImageView) this.findViewById(R.id.imageView);
 		this.camSurface = (SurfaceView)findViewById(R.id.surfaceView);
 
-		//this.captureButton = (Button) this.findViewById(R.id.CaptureImgBtn);
 		this.loadButton = (Button) this.findViewById(R.id.BackBtn);
 		this.shutterButton = (Button) this.findViewById(R.id.SnapItBtn);
 		this.savedButton = (Button) this.findViewById(R.id.SavedSnapsBtn);
@@ -105,7 +101,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		this.ocrResultView = (TextView) this.findViewById(R.id.ocrResult_textview);
 		this.ocrResultView.setTextSize(25);
 		
-
 		/* Setup some stuff for the camera preview */
 		ctx = getApplicationContext();
 		act = this;
@@ -118,13 +113,9 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		preview.setKeepScreenOn(true);
 
 		/* Setup the OnClickListeners for each button of the UI */
-		
-		
 
-		
 		this.helpButton.setOnClickListener(new View.OnClickListener(){
 			public void onClick(View v){
-				
 				CharSequence text = getString(R.string.helptext);
 				int duration = Toast.LENGTH_SHORT;
 
@@ -132,8 +123,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 200);
 
 				toast.show();
-				
-				
 			}
 		});
 	
@@ -255,14 +244,12 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 					ex.printStackTrace();
 				}
 			}
-
 			beginOcr();
 		}
 	}
 
 	public void beginOcr(){
 		shutterButton.setVisibility(View.GONE);
-		//captureButton.setVisibility(View.VISIBLE);
 		camSurface.setVisibility(View.GONE);
 		imageView.setVisibility(View.VISIBLE); //Make the image view visible.
 		resultContainer.setVisibility(View.VISIBLE); 
@@ -281,14 +268,20 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	protected void onResume() {
 		super.onResume();
 
-		//preview.mCamera = Camera.open();
-
 		camera = Camera.open();
 		preview.setCamera(camera);
-		//	Log.v("CAM", "HELLEOROROASD");
-
+		camera.setDisplayOrientation(90);
+		
+		if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
+	        camera.setDisplayOrientation(90);
+	        //lp.height = previewSurfaceHeight;
+	        //lp.width = (int) (previewSurfaceHeight / aspect);
+	    } else {
+	        camera.setDisplayOrientation(0);
+	       // lp.width = previewSurfaceWidth;
+	        //lp.height = (int) (previewSurfaceWidth / aspect);
+	    }
 		camera.startPreview(); //Crashes on this line
-		//camera.
 	}
 
 
@@ -333,8 +326,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				
 				imageView.setImageBitmap(bmp);
 				beginOcr();
-
-
 				resetCam();
 
 			} catch (FileNotFoundException e) {
