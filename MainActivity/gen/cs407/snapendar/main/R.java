@@ -56,6 +56,7 @@ public final class R {
         public static final int hawaii_ADM_service_scope=0x7f040008;
         public static final int hawaii_GUID_app_ID=0x7f04000f;
         public static final int hawaii_authentication_type=0x7f040009;
+        public static final int helptext=0x7f040010;
         public static final int loadimage_button_title=0x7f040002;
         public static final int menu_settings=0x7f040001;
         public static final int ocrresult_title=0x7f040005;

@@ -18,5 +18,6 @@
     <string name="error_missing_key_field">missing key field</string>
     <string name="error_missing_network_connection">missing network connection</string>
     <string name="hawaii_GUID_app_ID">f03cc095-df73-4f78-b77c-8cbde17e6d2c</string>
+    <string name="helptext">Hey! Try to do some stuff right!</string>
 
 </resources>

@@ -27,6 +27,7 @@ import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.SurfaceView;
 import android.view.View;
@@ -40,6 +41,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 //TODO: Make it so that when the screen is rotated we stay in the same state (i.e. with camera,
 //TODO: with picture, etc.)
@@ -58,6 +60,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	protected Button loadButton;
 	protected Button captureButton;
 	protected Button shutterButton;
+	protected Button helpButton;
 	
 
 	Preview preview;
@@ -96,6 +99,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		this.loadButton = (Button) this.findViewById(R.id.BackBtn);
 		this.shutterButton = (Button) this.findViewById(R.id.SnapItBtn);
 		this.savedButton = (Button) this.findViewById(R.id.SavedSnapsBtn);
+		this.helpButton = (Button) this.findViewById(R.id.HelpButton);
 
 		this.resultContainer = (LinearLayout) this.findViewById(R.id.ocr_result_container);
 		this.ocrResultView = (TextView) this.findViewById(R.id.ocrResult_textview);
@@ -103,7 +107,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		
 
 		/* Setup some stuff for the camera preview */
-		ctx = this;
+		ctx = getApplicationContext();
 		act = this;
 		//requestWindowFeature(Window.FEATURE_NO_TITLE); //Removes title bar at top
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -114,7 +118,24 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		preview.setKeepScreenOn(true);
 
 		/* Setup the OnClickListeners for each button of the UI */
+		
+		
 
+		
+		this.helpButton.setOnClickListener(new View.OnClickListener(){
+			public void onClick(View v){
+				
+				CharSequence text = getString(R.string.helptext);
+				int duration = Toast.LENGTH_SHORT;
+
+				Toast toast = Toast.makeText(ctx, text, duration);
+				toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 200);
+
+				toast.show();
+				
+				
+			}
+		});
 	
 		
 		this.savedButton.setOnClickListener(new View.OnClickListener(){
@@ -284,7 +305,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 
 	PictureCallback rawCallback = new PictureCallback() {
 		public void onPictureTaken(byte[] data, Camera camera) {
-			Log.d("snap", "onPictureTaken - raw" + data.length);
+			//Log.d("snap", "onPictureTaken - raw" + data.length);
 		}
 	};
 
