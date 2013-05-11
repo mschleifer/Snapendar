@@ -58,6 +58,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	protected Button loadButton;
 	protected Button captureButton;
 	protected Button shutterButton;
+	
 
 	Preview preview;
 	Camera camera;
@@ -73,12 +74,15 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	/* Task for calling the Project Hawaii OCR to keep it off the main thread */
 	protected AsyncTask<Void, Integer, AlertDialog.Builder> currentOcrTask;
 
+	private Button savedButton;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		/* Check if something was saved during onSaveInstanceState() */
 		if(savedInstanceState != null) {
 			photo = savedInstanceState.getParcelable("bitmap");
 		}
+				
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
@@ -89,12 +93,14 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		this.camSurface = (SurfaceView)findViewById(R.id.surfaceView);
 
 		this.captureButton = (Button) this.findViewById(R.id.CaptureImgBtn);
-		this.loadButton = (Button) this.findViewById(R.id.LoadImgBtn);
+		this.loadButton = (Button) this.findViewById(R.id.BackBtn);
 		this.shutterButton = (Button) this.findViewById(R.id.SnapItBtn);
+		this.savedButton = (Button) this.findViewById(R.id.SavedSnapsBtn);
 
 		this.resultContainer = (LinearLayout) this.findViewById(R.id.ocr_result_container);
 		this.ocrResultView = (TextView) this.findViewById(R.id.ocrResult_textview);
 		this.ocrResultView.setTextSize(25);
+		
 
 		/* Setup some stuff for the camera preview */
 		ctx = this;
@@ -116,6 +122,16 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				resultContainer.setVisibility(View.GONE);
 				shutterButton.setVisibility(View.VISIBLE);
 				camSurface.setVisibility(View.VISIBLE);
+			}
+		});
+		
+		this.savedButton.setOnClickListener(new View.OnClickListener(){
+			public void onClick(View v){
+				//Loading "Gallery" activity for testing
+				Intent intent = new Intent(v.getContext(), InfoActivity.class);
+		        startActivity(intent);      
+		      //  finish();
+				
 			}
 		});
 
@@ -259,7 +275,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		//	Log.v("CAM", "HELLEOROROASD");
 
 		camera.startPreview(); //Crashes on this line
-
+		//camera.
 	}
 
 

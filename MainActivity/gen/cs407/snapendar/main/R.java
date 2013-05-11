@@ -16,21 +16,22 @@ public final class R {
         public static final int welcome=0x7f020002;
     }
     public static final class id {
-        public static final int CaptureImgBtn=0x7f070003;
-        public static final int LoadImgBtn=0x7f070002;
+        public static final int BackBtn=0x7f070000;
+        public static final int CaptureImgBtn=0x7f070002;
+        public static final int HelpButton=0x7f070006;
+        public static final int SavedSnapsBtn=0x7f070003;
         public static final int SnapItBtn=0x7f070004;
-        public static final int buttonClick=0x7f07000d;
-        public static final int editText2=0x7f070000;
-        public static final int imageView=0x7f070008;
-        public static final int layout=0x7f07000c;
-        public static final int menu_settings=0x7f07000e;
-        public static final int ocrResult_textview=0x7f070007;
-        public static final int ocr_progressbar=0x7f07000b;
-        public static final int ocr_result_container=0x7f070006;
-        public static final int preview=0x7f070009;
-        public static final int surfaceView=0x7f07000a;
+        public static final int buttonClick=0x7f07000e;
+        public static final int imageView=0x7f070009;
+        public static final int layout=0x7f07000d;
+        public static final int listContainer=0x7f070001;
+        public static final int menu_settings=0x7f07000f;
+        public static final int ocrResult_textview=0x7f070008;
+        public static final int ocr_progressbar=0x7f07000c;
+        public static final int ocr_result_container=0x7f070007;
+        public static final int preview=0x7f07000a;
+        public static final int surfaceView=0x7f07000b;
         public static final int testCal_button=0x7f070005;
-        public static final int timePicker1=0x7f070001;
     }
     public static final class layout {
         public static final int activity_info=0x7f030000;

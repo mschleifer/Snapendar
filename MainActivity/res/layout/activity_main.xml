@@ -13,7 +13,7 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/LoadImgBtn"
+            android:id="@+id/BackBtn"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -26,6 +26,13 @@
             android:layout_height="wrap_content"
             android:text="@string/captureimage_button_title"
             android:visibility="gone" />
+
+        <Button
+            android:id="@+id/SavedSnapsBtn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Events" />
 
         <Button
             android:id="@+id/SnapItBtn"
@@ -42,6 +49,13 @@
             android:text="Set Event"
             android:visibility="gone" />
 
+        <Button
+            android:id="@+id/HelpButton"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="29dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text=" ?" />
     </LinearLayout>
 
     <LinearLayout

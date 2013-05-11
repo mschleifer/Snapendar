@@ -6,18 +6,27 @@
     android:measureWithLargestChild="true"
     android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|center_horizontal|top"
-        android:ems="10" />
+        android:background="#FFFFFF"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
 
-       <TimePicker
-           android:id="@+id/timePicker1"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_gravity="center_horizontal|top"
-           android:layout_marginTop="25dp" />
+        <Button
+            android:id="@+id/BackBtn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/listContainer"
+        android:layout_width="match_parent"
+        android:layout_height="236dp"
+        android:layout_weight="0.05"
+        android:orientation="vertical" >
+    </LinearLayout>
 
 </LinearLayout>
