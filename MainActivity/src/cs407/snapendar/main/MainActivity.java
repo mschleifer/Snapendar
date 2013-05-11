@@ -89,6 +89,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		storage = new Storage();
+		storage.writeTestFile();
 		
 		boolean hasRunBefore = storage.snapendarDirectoryExisted();
 		if(!hasRunBefore){
