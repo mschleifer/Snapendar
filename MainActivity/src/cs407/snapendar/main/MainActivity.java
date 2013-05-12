@@ -356,7 +356,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				outStream.write(data);
 				outStream.close();
 				Log.d("snap", "onPictureTaken - wrote bytes: " + data.length);
-				Log.d("snap", "onPictureTaken - jpeg");
 
 				InputStream is = new ByteArrayInputStream(data);
 				Bitmap bmp = BitmapFactory.decodeStream(is);
@@ -370,6 +369,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
+				Log.d("snap", "onPictureTaken - jpeg");
 			}
 		}
 	};
