@@ -89,6 +89,7 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 						mainActivity.ocrResultView.setText("Year: " + mainActivity.chronicCalendar.get(Calendar.YEAR) + 
 								"\nMonth: " + (mainActivity.chronicCalendar.get(Calendar.MONTH)+1) +
 								"\nDay: " + mainActivity.chronicCalendar.get(Calendar.DAY_OF_MONTH));
+						MainActivity.storage.renameFile(Storage.lastWrittenFile, String.valueOf(mainActivity.chronicCalendar.getTimeInMillis()));
 					}
 					else {
 						mainActivity.showErrorMessage("Couldn't parse a date from specified image",

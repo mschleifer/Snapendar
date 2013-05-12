@@ -11,6 +11,7 @@ import android.util.Log;
 public class Storage {
 
 	private File snapendarDir;
+	public static String lastWrittenFile;
 
 	public Storage(){
 		snapendarDir = new File(Environment.getExternalStorageDirectory(), "Snapendar/");
@@ -38,7 +39,15 @@ public class Storage {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
+		Storage.lastWrittenFile = filename;
 		return false;
+	}
+	
+	public  boolean renameFile(String from, String to){
+		createStorageDirectory();
+		File fromFile = new File(snapendarDir,from);
+		File toFile = new File(snapendarDir,to);
+		return fromFile.renameTo(toFile);
 	}
 
 	public void writeTestFile(){

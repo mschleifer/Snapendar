@@ -65,7 +65,8 @@ public class InfoActivity extends Activity {
 	    for (int x = 0; x < snaps.length; x++){
 
 		   TextView newView = new TextView(this);
-		   newView.setLayoutParams(new TableRow.LayoutParams(200,100));
+		   newView.setPadding(0, 0, 0, 25);
+		 //  newView.setLayoutParams(new TableRow.LayoutParams(200,400));
 		   newView.setText(snaps[x]);
 		   listOfDates.addView(newView);
 	   }   
