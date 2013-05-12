@@ -40,8 +40,6 @@ public class InfoActivity extends Activity {
             }
         });
 	     */
-
-
 	   
 	    Button finishBtn = (Button) this.findViewById(R.id.BackBtn);
 	    
