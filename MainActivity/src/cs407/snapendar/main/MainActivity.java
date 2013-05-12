@@ -12,12 +12,10 @@ import cs407.snapendar.main.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
@@ -59,15 +57,13 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	protected SurfaceView camSurface;
 
 	protected Button loadButton;
-	protected Button captureButton;
 	protected Button shutterButton;
 	protected Button helpButton;
+	private Button savedButton;
 
 	Preview preview;
 	Camera camera;
 	String fileName;
-	Activity act;
-	Context ctx;
 
 	protected Calendar chronicCalendar;
 
@@ -76,8 +72,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 
 	/* Task for calling the Project Hawaii OCR to keep it off the main thread */
 	protected AsyncTask<Void, Integer, AlertDialog.Builder> currentOcrTask;
-
-	private Button savedButton;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -111,13 +105,11 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		this.ocrResultView.setTextSize(25);
 		
 		/* Setup some stuff for the camera preview */
-		ctx = getApplicationContext();
-		act = this;
 		//requestWindowFeature(Window.FEATURE_NO_TITLE); //Removes title bar at top
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		preview = new Preview(this, camSurface);
-		preview.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+		preview.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		((FrameLayout) findViewById(R.id.preview)).addView(preview);
 		preview.setKeepScreenOn(true);
 
@@ -155,7 +147,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 
 		shutterButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				camera.takePicture(shutterCallback, rawCallback, jpegCallback);
+				camera.takePicture(shutterCallback, null, jpegCallback);
 			}
 		});
 
@@ -165,41 +157,37 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				camera.autoFocus(new AutoFocusCallback(){
 					@Override
 					public void onAutoFocus(boolean arg0, Camera arg1) {
-						camera.takePicture(shutterCallback, rawCallback, jpegCallback);
+						camera.takePicture(shutterCallback, null, jpegCallback);
 					}
 				});
 				return true;
 			}
 		});
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
 
-		/* First-run test code for adding a new event to the calendar. May want to 
-		 * write our own calendar insertion code instead of using an Intent. Needed
-		 * to change the Min Android version to 4.0 for this to work. */
-		/*
-		this.setEventButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				if(chronicCalendar != null) {
-					Intent intent = new Intent(Intent.ACTION_INSERT)
-				        .setData(Events.CONTENT_URI)
-				        .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, chronicCalendar.getTimeInMillis())
-				        .putExtra(Events.TITLE, "My Event on " + (chronicCalendar.get(Calendar.MONTH)+1) + "/" + chronicCalendar.get(Calendar.DAY_OF_MONTH))
-				        //.putExtra(Events.DESCRIPTION, "Super cool thing")
-				        //.putExtra(Events.EVENT_LOCATION, "CS 1240")
-				        .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
-				startActivity(intent);
-				}
-				// TODO: Might want to throw a pop-up/error or something here
-			}
-		});
-		 */
+		camera = Camera.open();
+		preview.setCamera(camera);
+		
+		//Camera.Parameters parameters = camera.getParameters();
+	    //parameters.setPreviewSize(preview.getWidth(), preview.getHeight());
+	    //camera.setParameters(parameters);
+	    //int previewFormat = parameters.getPreviewFormat();
+	    //Camera.Size camerasize = parameters.getPreviewSize();
 
-		/* TODO: We're probably not going to use this anymore since we jump right to camera */
-		/*if(photo == null) {
-			this.imageView.setImageResource(R.drawable.example2);
-		}
-		else {
-			this.imageView.setImageBitmap(photo);
-		}*/
+		if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
+		    camera.setDisplayOrientation(90);
+	        //lp.height = previewSurfaceHeight;
+	        //lp.width = (int) (previewSurfaceHeight / aspect);
+	    } else {
+	        camera.setDisplayOrientation(0);
+	       // lp.width = previewSurfaceWidth;
+	        //lp.height = (int) (previewSurfaceWidth / aspect);
+	    }
+		camera.startPreview();
 	}
 
 	@Override
@@ -262,10 +250,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 
 		toast.show();
 	}
-	
-	
-	
-	
 
 	public void beginOcr(){
 		shutterButton.setVisibility(View.GONE);
@@ -282,45 +266,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-
-		camera = Camera.open();
-		preview.setCamera(camera);
-		
-		Camera.Parameters parameters=camera.getParameters();
-		
-	    //parameters.setPreviewSize(preview.getWidth(), preview.getHeight());
-	   // camera.setParameters(parameters);
-	    int previewFormat = parameters.getPreviewFormat();
-	    int bitsperpixel = ImageFormat.getBitsPerPixel(previewFormat);
-	  
-	    int byteperpixel = 2;
-	    Log.v("snap", String.valueOf(byteperpixel));
-	    Camera.Size camerasize = parameters.getPreviewSize();
-	    int frame_bytesize = ((preview.getWidth() *preview.getHeight()) * byteperpixel);
-	    //create buffer
-	    byte[] frameBuffer=new byte[frame_bytesize];
-	    //buffer registry 
-	    Log.v("snap", String.valueOf(frameBuffer.length));
-	    camera.addCallbackBuffer(frameBuffer);
-	    
-	    
-
-		if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
-		    camera.setDisplayOrientation(90);
-	        //lp.height = previewSurfaceHeight;
-	        //lp.width = (int) (previewSurfaceHeight / aspect);
-	    } else {
-	        camera.setDisplayOrientation(0);
-	       // lp.width = previewSurfaceWidth;
-	        //lp.height = (int) (previewSurfaceWidth / aspect);
-	    }
-		camera.startPreview(); //Crashes on this line
-	}
-
 
 	private void resetCam() {
 		camera.startPreview();
@@ -374,3 +319,18 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		}
 	};
 }
+
+// TODO: Keeping this around for reference
+/*
+if(chronicCalendar != null) {
+	Intent intent = new Intent(Intent.ACTION_INSERT)
+					.setData(Events.CONTENT_URI)
+				    .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, chronicCalendar.getTimeInMillis())
+				    .putExtra(Events.TITLE, "My Event on " + (chronicCalendar.get(Calendar.MONTH)+1) + "/" + chronicCalendar.get(Calendar.DAY_OF_MONTH))
+				    //.putExtra(Events.DESCRIPTION, "Super cool thing")
+				    //.putExtra(Events.EVENT_LOCATION, "CS 1240")
+				    .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
+	startActivity(intent);
+}
+// TODO: Might want to throw a pop-up/error or something here
+*/
