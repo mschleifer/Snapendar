@@ -6,6 +6,7 @@
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/ButtonBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
@@ -25,14 +26,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Events" />
-
-        <Button
-            android:id="@+id/testCal_button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Set Event"
-            android:visibility="gone" />
 
         <Button
             android:id="@+id/HelpButton"
@@ -111,12 +104,5 @@
         android:layout_marginTop="320dp"
         android:gravity="center_vertical|center_horizontal"
         android:visibility="gone" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom"
-        android:gravity="center" >
-    </LinearLayout>
 
 </LinearLayout>

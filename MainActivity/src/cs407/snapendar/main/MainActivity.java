@@ -52,6 +52,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	protected LinearLayout resultContainer;
 	protected TextView ocrResultView;
 	protected SurfaceView camSurface;
+	protected FrameLayout cameraFrame;
 
 	protected Button loadButton;
 	protected Button shutterButton;
@@ -93,6 +94,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		this.progressBar = (ProgressBar) this.findViewById(R.id.ocr_progressbar);
 		this.imageView = (ImageView) this.findViewById(R.id.imageView);
 		this.camSurface = (SurfaceView)findViewById(R.id.surfaceView);
+		this.cameraFrame = (FrameLayout)findViewById(R.id.preview);
 
 		this.loadButton = (Button) this.findViewById(R.id.BackBtn);
 		this.shutterButton = (Button) this.findViewById(R.id.SnapItBtn);
@@ -240,35 +242,19 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			beginOcr();
 		}
 	}
-	
-	public void pushToast(String text){
-		int duration = Toast.LENGTH_SHORT;
 
-		Toast toast = Toast.makeText(getApplicationContext(), text, duration);
-		toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 200);
-
-		toast.show();
-	}
-
-	public void beginOcr(){
+	protected void beginOcr(){
 		shutterButton.setVisibility(View.GONE);
-		camSurface.setVisibility(View.GONE);
+		cameraFrame.setVisibility(View.GONE);
+		
+		
 		imageView.setVisibility(View.VISIBLE); //Make the image view visible.
-		resultContainer.setVisibility(View.VISIBLE); 
+		resultContainer.setVisibility(View.GONE);
+		progressBar.setVisibility(View.VISIBLE);
+		ocrResultView.setText("");
 		
 		currentOcrTask = new OcrTask(this);
 		currentOcrTask.execute();
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
-	}
-
-	private void resetCam() {
-		camera.startPreview();
-		preview.setCamera(camera);
 	}
 
 	ShutterCallback shutterCallback = new ShutterCallback() {
@@ -293,18 +279,36 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	
 				Log.d("snap", "onPictureTaken - wrote bytes: " + data.length);
 				Log.d("snap", "onPictureTaken - jpeg");
-				resetCam();
+				pushToast("Image saved to " + storage.getDirectoryPath());
 			}
-			/*
+			
 			InputStream is = new ByteArrayInputStream(data);
 			Bitmap bmp = BitmapFactory.decodeStream(is);
 
 			imageView.setImageBitmap(bmp);
 			beginOcr();
-			resetCam();
-			*/
 		}
 	};
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_main, menu);
+		return true;
+	}
+
+	private void resetCam() {
+		camera.startPreview();
+		preview.setCamera(camera);
+	}
+	
+	public void pushToast(String text){
+		int duration = Toast.LENGTH_SHORT;
+
+		Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+		toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 200);
+
+		toast.show();
+	}
 }
 
 // TODO: Keeping this around for reference

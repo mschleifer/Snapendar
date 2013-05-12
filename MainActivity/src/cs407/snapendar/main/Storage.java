@@ -109,4 +109,8 @@ public class Storage {
 		Log.v("snap", "storageDebug - dirExists: " + String.valueOf(exists));
 		return exists;
 	}
+	
+	public String getDirectoryPath() {
+		return snapendarDir.getAbsolutePath();
+	}
 }

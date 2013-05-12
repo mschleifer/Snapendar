@@ -24,65 +24,47 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 
 	private OcrServiceResult serviceResult;
 
-	public final MainActivity thisActivity;
+	public final MainActivity mainActivity;
 
 	public OcrTask(MainActivity a)
 	{
-		thisActivity = a;
+		mainActivity = a;
 	}
 	
 	protected void onPreExecute() {
-		// TODO: Set all this stuff up in MainActivity in the beginOCR() call
-		thisActivity.resultContainer.setVisibility(View.GONE);
-		thisActivity.progressBar.setVisibility(View.VISIBLE);
-		thisActivity.ocrResultView.setText("");
-		thisActivity.imageView.setVisibility(View.GONE);
 	}
 
 	protected AlertDialog.Builder doInBackground(Void... listTypes) {
 		// get image from ImageView
-		Bitmap image = ((BitmapDrawable) thisActivity.imageView.getDrawable())
-				.getBitmap();
-		byte[] imageBytes = getImageByte(image);
+		byte[] imageBytes = getImageByte(((BitmapDrawable) mainActivity.imageView.getDrawable())
+							.getBitmap());
+		
 		if(imageBytes.length >= 1572864) {
-
-			return new AlertDialog.Builder(thisActivity)
-			.setTitle("Size Warning")
-			.setMessage("Your image is " + (double)imageBytes.length + 
-					"B in size. This may cause unexpected errors.")
-					.setPositiveButton("Continue", new OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) { 
-							// continue with delete
-						}
-					})
-					.setNegativeButton("Cancel", new OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) { 
-							// do nothing
-						}
-					});
-
-			/*return dialogToShow(
-						"Your image is " + 
-						(double)imageBytes.length + 
-						"B in size. This may cause unexpected errors.",
-						new Exception());*/
+			return new AlertDialog.Builder(mainActivity)
+				.setTitle("Size Warning")
+				.setMessage("Your image is " + 
+								String.format("%1$.2f", (double)imageBytes.length / 1048576) + 
+								"MB in size. The maximum image size is 1.5MB. Your image " +
+								"was not uploaded for parsing.")
+				.setNeutralButton("Ok", new OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) { }
+				});
 		}
+		
 		try {
-			OcrService.recognizeImage(thisActivity.getBaseApplication()
-					.getClientIdentity(), imageBytes,
+			OcrService.recognizeImage(mainActivity.getBaseApplication().getClientIdentity(), imageBytes,
 					new OnCompleteListener<OcrServiceResult>() {
-				public void done(OcrServiceResult result) {
-					serviceResult = result;
-
-				}
-			}, null);
+						public void done(OcrServiceResult result) {
+							serviceResult = result;
+						}
+					}, null);
 		} catch (Exception exception) {
-			return thisActivity.dialogToShow("Couldn't execute the ocr operation",
+			return mainActivity.dialogToShow("Couldn't execute the ocr operation",
 					exception);
 		}
 
 		if (serviceResult.getStatus() != microsoft.hawaii.hawaiiClientLibraryBase.Status.Success) {
-			return thisActivity.dialogToShow(
+			return mainActivity.dialogToShow(
 					"Error when using ocr service to recognize the specified image",
 					serviceResult.getException());
 		}
@@ -92,37 +74,36 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 
 	protected void onPostExecute(AlertDialog.Builder dialogBuilder) {
 		if (dialogBuilder != null) {
-			thisActivity.showErrorMessage(dialogBuilder);
+			mainActivity.showErrorMessage(dialogBuilder);
 		} else {
-			thisActivity.resultContainer.setVisibility(View.VISIBLE);
+			mainActivity.resultContainer.setVisibility(View.VISIBLE);
 			List<OcrText> resultList = serviceResult.getOcrTexts();
 			if (resultList.size() > 0) {
 				String ocrResult = resultList.get(0).getText();
 				if (!Utility.isStringNullOrEmpty(ocrResult)) {
-					thisActivity.ocrResultView.setText(ocrResult);
+					mainActivity.ocrResultView.setText(ocrResult);
 
 					Span chronicDate = Chronic.parse(ocrResult);
 					if(chronicDate != null) {
-						thisActivity.chronicCalendar = chronicDate.getBeginCalendar();
-						thisActivity.ocrResultView.setText("Year: " + thisActivity.chronicCalendar.get(Calendar.YEAR) + 
-								"\nMonth: " + (thisActivity.chronicCalendar.get(Calendar.MONTH)+1) +
-								"\nDay: " + thisActivity.chronicCalendar.get(Calendar.DAY_OF_MONTH));
+						mainActivity.chronicCalendar = chronicDate.getBeginCalendar();
+						mainActivity.ocrResultView.setText("Year: " + mainActivity.chronicCalendar.get(Calendar.YEAR) + 
+								"\nMonth: " + (mainActivity.chronicCalendar.get(Calendar.MONTH)+1) +
+								"\nDay: " + mainActivity.chronicCalendar.get(Calendar.DAY_OF_MONTH));
 					}
 					else {
-						thisActivity.showErrorMessage("Couldn't parse a date from specified image",
+						mainActivity.showErrorMessage("Couldn't parse a date from specified image",
 								null);
 					}
 
 				} else {
-					thisActivity.showErrorMessage("Couldn't recognize the specified image", 
+					mainActivity.showErrorMessage("Couldn't recognize the specified image", 
 							null);
 				}
 			}
 		}
 
-		thisActivity.progressBar.setVisibility(View.GONE);
-		thisActivity.imageView.setVisibility(View.VISIBLE);
-		thisActivity.currentOcrTask = null;
+		mainActivity.progressBar.setVisibility(View.GONE);
+		mainActivity.currentOcrTask = null;
 	}
 
 
