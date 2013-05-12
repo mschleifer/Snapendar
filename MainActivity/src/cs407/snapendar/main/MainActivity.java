@@ -1,14 +1,12 @@
 package cs407.snapendar.main;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Calendar;
-
-
 import cs407.snapendar.main.R;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.IOException;
+
+import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -48,7 +46,6 @@ import android.widget.Toast;
 
 public class MainActivity extends HawaiiBaseAuthActivity {
 	private static final int SELECT_IMAGE = 2888;
-	public static Storage storage;
 
 	protected ImageView imageView;
 	protected ProgressBar progressBar;
@@ -65,6 +62,8 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	Camera camera;
 	String fileName;
 
+	protected static Storage storage;
+	
 	protected Calendar chronicCalendar;
 
 	/* Class variable to represent the "photo" captured by the camera */
@@ -85,7 +84,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		storage = new Storage();
 		storage.writeTestFile();
 		
-		boolean hasRunBefore = storage.snapendarDirectoryExisted();
+		boolean hasRunBefore = storage.snapendarDirectoryExists();
 		if(!hasRunBefore){
 			pushToast(getString(R.string.helptext));
 		}
@@ -125,7 +124,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			public void onClick(View v){
 				//Loading "Gallery" activity for testing
 				
-				if(storage.storageAccessible()){
+				if(Storage.storageAccessible()){
 				Intent intent = new Intent(v.getContext(), InfoActivity.class);
 		        startActivity(intent);      
 				}
@@ -287,35 +286,23 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	PictureCallback jpegCallback = new PictureCallback() {
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
-			FileOutputStream outStream = null;
-			try {
-				// Write to External Storage
-				// TODO: Use a non-hardcoded path; also, check if external storage is available
-				// TODO: http://developer.android.com/guide/topics/data/data-storage.html#filesExternal
-				// File path = Environment.getExternalStoragePublicDirectory(
-	            // 		Environment.DIRECTORY_PICTURES);
-	            // File file = new File(path, "DemoPicture.jpg");
-
-				fileName = String.format("/sdcard/camtest/%d.jpg", System.currentTimeMillis());
-				outStream = new FileOutputStream(fileName);
-				outStream.write(data);
-				outStream.close();
+			
+			if(Storage.storageAccessible()) {
+				/* Write to External Storage */
+				storage.writeFile(String.format("SNPNDR_%d.jpg", System.currentTimeMillis()), data);
+	
 				Log.d("snap", "onPictureTaken - wrote bytes: " + data.length);
-
-				InputStream is = new ByteArrayInputStream(data);
-				Bitmap bmp = BitmapFactory.decodeStream(is);
-				
-				imageView.setImageBitmap(bmp);
-				beginOcr();
-				resetCam();
-
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
 				Log.d("snap", "onPictureTaken - jpeg");
+				resetCam();
 			}
+			/*
+			InputStream is = new ByteArrayInputStream(data);
+			Bitmap bmp = BitmapFactory.decodeStream(is);
+
+			imageView.setImageBitmap(bmp);
+			beginOcr();
+			resetCam();
+			*/
 		}
 	};
 }
