@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.IOException;
 
 import java.util.Calendar;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,6 +19,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
+import android.hardware.Camera.Size;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -184,14 +186,27 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		super.onResume();
 
 		camera = Camera.open();
-		preview.setCamera(camera);
 		
-		//Camera.Parameters parameters = camera.getParameters();
+		Camera.Parameters parameters = camera.getParameters();
 	    //parameters.setPreviewSize(preview.getWidth(), preview.getHeight());
 	    //camera.setParameters(parameters);
 	    //int previewFormat = parameters.getPreviewFormat();
 	    //Camera.Size camerasize = parameters.getPreviewSize();
+		
+		List<Size> sizes = parameters.getSupportedPictureSizes();
+		for(int i = sizes.size()-1; i >= 0; i--) {
+			if(sizes.get(i).width == 640 && sizes.get(i).height == 480) {
+				parameters.setPictureSize(sizes.get(i).width, sizes.get(i).height);
+				break;
+			}
+			if(sizes.get(i).width > 640 && sizes.get(i).height > 480) {
+				parameters.setPictureSize(sizes.get(i).width, sizes.get(i).height);
+				break;
+			}
+		}
 
+		camera.setParameters(parameters);
+        
 		if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
 		    camera.setDisplayOrientation(90);
 	        //lp.height = previewSurfaceHeight;
@@ -201,6 +216,8 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	       // lp.width = previewSurfaceWidth;
 	        //lp.height = (int) (previewSurfaceWidth / aspect);
 	    }
+		
+		preview.setCamera(camera);
 		camera.startPreview();
 	}
 
@@ -296,9 +313,9 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			}
 			
 			InputStream is = new ByteArrayInputStream(data);
-			Bitmap bmp = BitmapFactory.decodeStream(is);
+			photo = BitmapFactory.decodeStream(is);
 
-			imageView.setImageBitmap(bmp);
+			imageView.setImageBitmap(photo);
 			beginOcr();
 		}
 	};
