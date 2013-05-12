@@ -67,17 +67,18 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="115dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.54"
         android:contentDescription="Selected Image"
         android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/preview"
-        android:layout_width="fill_parent"
-        android:layout_height="198dp" >
+        android:layout_width="320dp"
+        android:layout_height="240dp"
+        android:layout_gravity="center_horizontal">
         <!-- android:layout_weight=".46" > --><!-- This line tears shit up on Galaxy S3 -->
 
         <SurfaceView
@@ -92,7 +93,6 @@
         android:layout_width="wrap_content"
         android:layout_height="64dp"
         android:layout_gravity="center"
-        android:layout_marginTop="320dp"
         android:gravity="center_vertical|center_horizontal"
         android:visibility="gone" />
 

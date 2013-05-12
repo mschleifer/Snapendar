@@ -13,7 +13,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.view.View;
 
@@ -96,7 +95,7 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 					}
 
 				} else {
-					mainActivity.showErrorMessage("Couldn't recognize the specified image", 
+					mainActivity.showErrorMessage("Couldn't parse text from specified image", 
 							null);
 				}
 			}
@@ -104,6 +103,7 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 
 		mainActivity.progressBar.setVisibility(View.GONE);
 		mainActivity.backButton.setVisibility(View.VISIBLE);
+		mainActivity.buttonBar.setVisibility(View.VISIBLE);
 		mainActivity.currentOcrTask = null;
 	}
 

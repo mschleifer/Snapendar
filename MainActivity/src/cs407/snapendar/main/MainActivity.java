@@ -3,7 +3,6 @@ package cs407.snapendar.main;
 import cs407.snapendar.main.R;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -56,6 +55,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	protected TextView ocrResultView;
 	protected SurfaceView camSurface;
 	protected FrameLayout cameraFrame;
+	protected LinearLayout buttonBar;
 
 	protected Button loadButton;
 	protected Button backButton;
@@ -87,7 +87,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		storage = new Storage();
-		storage.writeTestFile();
+		//storage.writeTestFile();
 		
 		boolean hasRunBefore = storage.snapendarDirectoryExists();
 		if(!hasRunBefore){
@@ -99,6 +99,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		this.imageView = (ImageView) this.findViewById(R.id.imageView);
 		this.camSurface = (SurfaceView)findViewById(R.id.surfaceView);
 		this.cameraFrame = (FrameLayout)findViewById(R.id.preview);
+		this.buttonBar = (LinearLayout)findViewById(R.id.ButtonBar);
 
 		this.loadButton = (Button) this.findViewById(R.id.LoadBtn);
 		this.backButton = (Button) this.findViewById(R.id.BackBtn);
@@ -205,7 +206,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				break;
 			}
 		}
-
+		
 		camera.setParameters(parameters);
         
 		if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
@@ -277,11 +278,12 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	protected void beginOcr(){
 		shutterButton.setVisibility(View.GONE);
 		cameraFrame.setVisibility(View.GONE);
+		buttonBar.setVisibility(View.GONE);
 		
 		imageView.setVisibility(View.VISIBLE); //Make the image view visible.
 		resultContainer.setVisibility(View.GONE);
 		progressBar.setVisibility(View.VISIBLE);
-		ocrResultView.setText("Result:");
+		ocrResultView.setText("");
 		
 		currentOcrTask = new OcrTask(this);
 		currentOcrTask.execute();
@@ -333,7 +335,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	}
 	
 	public void pushToast(String text){
-		int duration = Toast.LENGTH_SHORT;
+		int duration = Toast.LENGTH_LONG;
 
 		Toast toast = Toast.makeText(getApplicationContext(), text, duration);
 		toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 200);

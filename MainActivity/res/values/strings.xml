@@ -8,8 +8,8 @@
     <string name="help_button_title">"?"</string>
     <string name="snap_button_title">Snap</string>
     <string name="back_button_title">Back</string>
-    <string name="ocrresult_title">OCR result: </string>
-    <string name="helptext">Hey! Try to do some stuff right!</string>
+    <string name="ocrresult_title">Your Parsed Text: </string>
+    <string name="helptext">Snap(below) or Load(above) an image to put an event in your calendar</string>
     
     <!-- Brought in from HawaiiSampleAppBase --> 
     <string name="hawaii_ADM_client_ID"></string>
