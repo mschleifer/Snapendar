@@ -3,6 +3,7 @@ package cs407.snapendar.main;
 import cs407.snapendar.main.R;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -272,16 +273,15 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			beginOcr();
 		}
 	}
-
+		
 	protected void beginOcr(){
 		shutterButton.setVisibility(View.GONE);
 		cameraFrame.setVisibility(View.GONE);
 		
-		
 		imageView.setVisibility(View.VISIBLE); //Make the image view visible.
 		resultContainer.setVisibility(View.GONE);
 		progressBar.setVisibility(View.VISIBLE);
-		ocrResultView.setText("");
+		ocrResultView.setText("Result:");
 		
 		currentOcrTask = new OcrTask(this);
 		currentOcrTask.execute();
@@ -305,6 +305,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			
 			if(Storage.storageAccessible()) {
 				/* Write to External Storage */
+				
 				storage.writeFile(String.format("SNPNDR_%d.jpg", System.currentTimeMillis()), data);
 	
 				Log.d("snap", "onPictureTaken - wrote bytes: " + data.length);
