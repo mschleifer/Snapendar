@@ -103,6 +103,7 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 		}
 
 		mainActivity.progressBar.setVisibility(View.GONE);
+		mainActivity.backButton.setVisibility(View.VISIBLE);
 		mainActivity.currentOcrTask = null;
 	}
 

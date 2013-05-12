@@ -55,9 +55,10 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	protected FrameLayout cameraFrame;
 
 	protected Button loadButton;
-	protected Button shutterButton;
+	protected Button backButton;
+	protected Button savedButton;
 	protected Button helpButton;
-	private Button savedButton;
+	protected Button shutterButton;
 
 	Preview preview;
 	Camera camera;
@@ -96,10 +97,11 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		this.camSurface = (SurfaceView)findViewById(R.id.surfaceView);
 		this.cameraFrame = (FrameLayout)findViewById(R.id.preview);
 
-		this.loadButton = (Button) this.findViewById(R.id.BackBtn);
-		this.shutterButton = (Button) this.findViewById(R.id.SnapItBtn);
+		this.loadButton = (Button) this.findViewById(R.id.LoadBtn);
+		this.backButton = (Button) this.findViewById(R.id.BackBtn);
 		this.savedButton = (Button) this.findViewById(R.id.SavedSnapsBtn);
 		this.helpButton = (Button) this.findViewById(R.id.HelpButton);
+		this.shutterButton = (Button) this.findViewById(R.id.SnapItBtn);
 
 		this.resultContainer = (LinearLayout) this.findViewById(R.id.ocr_result_container);
 		this.ocrResultView = (TextView) this.findViewById(R.id.ocrResult_textview);
@@ -125,7 +127,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		this.savedButton.setOnClickListener(new View.OnClickListener(){
 			public void onClick(View v){
 				//Loading "Gallery" activity for testing
-				
 				if(Storage.storageAccessible()){
 				Intent intent = new Intent(v.getContext(), InfoActivity.class);
 		        startActivity(intent);      
@@ -143,6 +144,18 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 						Intent.ACTION_PICK,
 						android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 				startActivityForResult(loadPicture, SELECT_IMAGE);
+			}
+		});
+		
+		this.backButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				imageView.setVisibility(View.GONE);
+				resultContainer.setVisibility(View.GONE);
+				backButton.setVisibility(View.GONE);
+				
+				shutterButton.setVisibility(View.VISIBLE);
+				cameraFrame.setVisibility(View.VISIBLE);
+				resetCam();
 			}
 		});
 

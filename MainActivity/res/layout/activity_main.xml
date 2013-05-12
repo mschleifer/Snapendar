@@ -18,6 +18,14 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/back_button_title"
+            android:visibility="gone" />
+        
+        <Button
+            android:id="@+id/LoadBtn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/loadimage_button_title" />
 
         <Button
@@ -25,7 +33,7 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Events" />
+            android:text="@string/events_button_title" />
 
         <Button
             android:id="@+id/HelpButton"
@@ -33,7 +41,7 @@
             android:layout_width="29dp"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:text=" ?" />
+            android:text="@string/help_button_title" />
     </LinearLayout>
 
     <LinearLayout
@@ -89,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/black"
-                android:text="Snap"
+                android:text="@string/snap_button_title"
                 android:textColor="@android:color/white" />
 
    		</LinearLayout>
