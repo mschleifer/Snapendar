@@ -41,11 +41,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//TODO: Make it so that when the screen is rotated we stay in the same state (i.e. with camera,
-//TODO: with picture, etc.)
-//TODO: Need to save data across the "Activity Lifetime Cycle" i.e onCreate/onDestroy
-//TODO: http://developer.android.com/guide/topics/resources/runtime-changes.html
-
 public class MainActivity extends HawaiiBaseAuthActivity {
 	private static final int SELECT_IMAGE = 2888;
 
@@ -68,7 +63,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	String fileName;
 
 	protected static Storage storage;
-	
+
 	protected Calendar chronicCalendar;
 
 	/* Class variable to represent the "photo" captured by the camera */
@@ -83,12 +78,12 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		if(savedInstanceState != null) {
 			photo = savedInstanceState.getParcelable("bitmap");
 		}
-				
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		storage = new Storage();
 		//storage.writeTestFile();
-		
+
 		boolean hasRunBefore = storage.snapendarDirectoryExists();
 		if(!hasRunBefore){
 			pushToast(getString(R.string.helptext));
@@ -110,9 +105,8 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		this.resultContainer = (LinearLayout) this.findViewById(R.id.ocr_result_container);
 		this.ocrResultView = (TextView) this.findViewById(R.id.ocrResult_textview);
 		this.ocrResultView.setTextSize(25);
-		
+
 		/* Setup some stuff for the camera preview */
-		//requestWindowFeature(Window.FEATURE_NO_TITLE); //Removes title bar at top
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		preview = new Preview(this, camSurface);
@@ -121,19 +115,19 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		preview.setKeepScreenOn(true);
 
 		/* Setup the OnClickListeners for each button of the UI */
-			
+
 		this.helpButton.setOnClickListener(new View.OnClickListener(){
 			public void onClick(View v){
 				pushToast(getString(R.string.helptext));
 			}
 		});
-	
+
 		this.savedButton.setOnClickListener(new View.OnClickListener(){
 			public void onClick(View v){
 				//Loading "Gallery" activity for testing
 				if(Storage.storageAccessible()){
-				Intent intent = new Intent(v.getContext(), InfoActivity.class);
-		        startActivity(intent);      
+					Intent intent = new Intent(v.getContext(), InfoActivity.class);
+					startActivity(intent);      
 				}
 				else{
 					pushToast("Storage isn't accessible.");
@@ -150,13 +144,13 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				startActivityForResult(loadPicture, SELECT_IMAGE);
 			}
 		});
-		
+
 		this.backButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				imageView.setVisibility(View.GONE);
 				resultContainer.setVisibility(View.GONE);
 				backButton.setVisibility(View.GONE);
-				
+
 				shutterButton.setVisibility(View.VISIBLE);
 				cameraFrame.setVisibility(View.VISIBLE);
 				resetCam();
@@ -182,19 +176,16 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			}
 		});
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 
 		camera = Camera.open();
-		
+
 		Camera.Parameters parameters = camera.getParameters();
-	    //parameters.setPreviewSize(preview.getWidth(), preview.getHeight());
-	    //camera.setParameters(parameters);
-	    //int previewFormat = parameters.getPreviewFormat();
-	    //Camera.Size camerasize = parameters.getPreviewSize();
-		
+
+		/* Select the camera resolution; use 640x480 if available or next largest if not */
 		List<Size> sizes = parameters.getSupportedPictureSizes();
 		for(int i = sizes.size()-1; i >= 0; i--) {
 			if(sizes.get(i).width == 640 && sizes.get(i).height == 480) {
@@ -206,19 +197,19 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				break;
 			}
 		}
-		
+
 		camera.setParameters(parameters);
-        
+
 		if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
-		    camera.setDisplayOrientation(90);
-	        //lp.height = previewSurfaceHeight;
-	        //lp.width = (int) (previewSurfaceHeight / aspect);
-	    } else {
-	        camera.setDisplayOrientation(0);
-	       // lp.width = previewSurfaceWidth;
-	        //lp.height = (int) (previewSurfaceWidth / aspect);
-	    }
-		
+			camera.setDisplayOrientation(90);
+			//lp.height = previewSurfaceHeight;
+			//lp.width = (int) (previewSurfaceHeight / aspect);
+		} else {
+			camera.setDisplayOrientation(0);
+			// lp.width = previewSurfaceWidth;
+			//lp.height = (int) (previewSurfaceWidth / aspect);
+		}
+
 		preview.setCamera(camera);
 		camera.startPreview();
 	}
@@ -254,18 +245,36 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		
-		// If our Intent calls were a great success
+
+		// If our Intent call was a great success
 		if (resultCode == Activity.RESULT_OK && data != null) {
 			if (requestCode == SELECT_IMAGE) {
 				// This gets the URI of the image the user selected
 				Uri imgUri = data.getData();
-				this.imageView.setImageURI(imgUri);
+
 
 				/* Convert the URI to a Bitmap we can store; may break if 
 				 * the image of the URI is large*/
 				try {
-					photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imgUri);
+					InputStream input = this.getContentResolver().openInputStream(imgUri);
+
+					BitmapFactory.Options onlyBoundsOptions = new BitmapFactory.Options();
+					onlyBoundsOptions.inJustDecodeBounds = true;
+					BitmapFactory.decodeStream(input, null, onlyBoundsOptions);
+					input.close();
+
+					if(onlyBoundsOptions.outWidth > 640 && onlyBoundsOptions.outWidth > 480) {
+						input = this.getContentResolver().openInputStream(imgUri);
+						photo = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(input, null, null),
+								640, 480, false);
+						input.close();
+					}
+					else {
+						photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imgUri);
+					}
+
+					this.imageView.setImageBitmap(photo);
+
 				}
 				catch(IOException ex) {
 					ex.printStackTrace();
@@ -274,17 +283,17 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			beginOcr();
 		}
 	}
-		
+
 	protected void beginOcr(){
 		shutterButton.setVisibility(View.GONE);
 		cameraFrame.setVisibility(View.GONE);
 		buttonBar.setVisibility(View.GONE);
-		
+
 		imageView.setVisibility(View.VISIBLE); //Make the image view visible.
 		resultContainer.setVisibility(View.GONE);
 		progressBar.setVisibility(View.VISIBLE);
 		ocrResultView.setText("");
-		
+
 		currentOcrTask = new OcrTask(this);
 		currentOcrTask.execute();
 	}
@@ -304,17 +313,17 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 	PictureCallback jpegCallback = new PictureCallback() {
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
-			
+
 			if(Storage.storageAccessible()) {
 				/* Write to External Storage */
-				
+
 				storage.writeFile(String.format("SNPNDR_%d.jpg", System.currentTimeMillis()), data);
-	
+
 				Log.d("snap", "onPictureTaken - wrote bytes: " + data.length);
 				Log.d("snap", "onPictureTaken - jpeg");
 				pushToast("Image saved to " + storage.getDirectoryPath());
 			}
-			
+
 			InputStream is = new ByteArrayInputStream(data);
 			photo = BitmapFactory.decodeStream(is);
 
@@ -322,7 +331,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			beginOcr();
 		}
 	};
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
@@ -333,7 +342,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		camera.startPreview();
 		preview.setCamera(camera);
 	}
-	
+
 	public void pushToast(String text){
 		int duration = Toast.LENGTH_LONG;
 
@@ -357,4 +366,4 @@ if(chronicCalendar != null) {
 	startActivity(intent);
 }
 // TODO: Might want to throw a pop-up/error or something here
-*/
+ */
