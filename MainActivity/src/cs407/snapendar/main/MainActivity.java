@@ -91,6 +91,12 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			pushToast(getString(R.string.helptext));
 		}
 
+		Calendar calTest = Calendar.getInstance();
+		calTest.set(Calendar.YEAR, 2014);
+		
+		
+		Log.v("cal",calTest.toString());
+		
 		/* Setup all the class members from the view objects*/
 		this.progressBar = (ProgressBar) this.findViewById(R.id.ocr_progressbar);
 		this.imageView = (ImageView) this.findViewById(R.id.imageView);
