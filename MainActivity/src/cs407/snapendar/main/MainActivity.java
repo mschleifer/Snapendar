@@ -44,6 +44,7 @@ import android.widget.Toast;
 public class MainActivity extends HawaiiBaseAuthActivity {
 	private static final int SELECT_IMAGE = 2888;
 
+	/* UI Elements */
 	protected ImageView imageView;
 	protected ProgressBar progressBar;
 	protected LinearLayout resultContainer;
@@ -64,9 +65,10 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 
 	protected static Storage storage;
 
+	/* Calendar holding any dates parsed after OCR */
 	protected Calendar chronicCalendar;
 
-	/* Class variable to represent the "photo" captured by the camera */
+	/* Class variable to represent the "photo" captured/loaded by user */
 	protected Bitmap photo = null;
 
 	/* Task for calling the Project Hawaii OCR to keep it off the main thread */
@@ -304,12 +306,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		}
 	};
 
-	PictureCallback rawCallback = new PictureCallback() {
-		public void onPictureTaken(byte[] data, Camera camera) {
-			Log.d("snap", "onPictureTaken - raw" + data);
-		}
-	};
-
 	PictureCallback jpegCallback = new PictureCallback() {
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
@@ -352,18 +348,3 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		toast.show();
 	}
 }
-
-// TODO: Keeping this around for reference
-/*
-if(chronicCalendar != null) {
-	Intent intent = new Intent(Intent.ACTION_INSERT)
-					.setData(Events.CONTENT_URI)
-				    .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, chronicCalendar.getTimeInMillis())
-				    .putExtra(Events.TITLE, "My Event on " + (chronicCalendar.get(Calendar.MONTH)+1) + "/" + chronicCalendar.get(Calendar.DAY_OF_MONTH))
-				    //.putExtra(Events.DESCRIPTION, "Super cool thing")
-				    //.putExtra(Events.EVENT_LOCATION, "CS 1240")
-				    .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
-	startActivity(intent);
-}
-// TODO: Might want to throw a pop-up/error or something here
- */

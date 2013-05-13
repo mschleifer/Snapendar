@@ -34,7 +34,7 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 	}
 
 	protected AlertDialog.Builder doInBackground(Void... listTypes) {
-		// get image from ImageView
+		// get image from photo Bitmap
 		byte[] imageBytes = getImageByte(mainActivity.photo);
 		
 		if(imageBytes.length >= 1572864) {
