@@ -83,11 +83,14 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 
 					Span chronicDate = Chronic.parse(ocrResult);
 					if(chronicDate != null) {
-						mainActivity.chronicCalendar = chronicDate.getBeginCalendar();
-						mainActivity.ocrResultView.setText("Year: " + mainActivity.chronicCalendar.get(Calendar.YEAR) + 
-								"\nMonth: " + (mainActivity.chronicCalendar.get(Calendar.MONTH)+1) +
-								"\nDay: " + mainActivity.chronicCalendar.get(Calendar.DAY_OF_MONTH));
-						MainActivity.storage.renameFile(Storage.lastWrittenFile, String.valueOf(mainActivity.chronicCalendar.getTimeInMillis()));
+						Calendar chronicCalendar;
+						chronicCalendar = chronicDate.getBeginCalendar();
+						mainActivity.ocrResultView.setText("Year: " + chronicCalendar.get(Calendar.YEAR) + 
+								"\nMonth: " + (chronicCalendar.get(Calendar.MONTH)+1) +
+								"\nDay: " + chronicCalendar.get(Calendar.DAY_OF_MONTH));
+						//TODO: Throwing a null pointer exception in some cases
+						//MainActivity.storage.renameFile(Storage.lastWrittenFile, String.valueOf(chronicCalendar.getTimeInMillis()));
+						mainActivity.insertNewEvent(chronicCalendar);
 					}
 					else {
 						mainActivity.showErrorMessage("Couldn't parse a date from specified image",

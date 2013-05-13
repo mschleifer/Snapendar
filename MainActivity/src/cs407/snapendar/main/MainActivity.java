@@ -23,6 +23,8 @@ import android.hardware.Camera.Size;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.CalendarContract;
+import android.provider.CalendarContract.Events;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -65,9 +67,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 
 	protected static Storage storage;
 
-	/* Calendar holding any dates parsed after OCR */
-	protected Calendar chronicCalendar;
-
 	/* Class variable to represent the "photo" captured/loaded by user */
 	protected Bitmap photo = null;
 
@@ -93,10 +92,10 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 
 		Calendar calTest = Calendar.getInstance();
 		calTest.set(Calendar.YEAR, 2014);
-		
-		
+
+
 		Log.v("cal",calTest.toString());
-		
+
 		/* Setup all the class members from the view objects*/
 		this.progressBar = (ProgressBar) this.findViewById(R.id.ocr_progressbar);
 		this.imageView = (ImageView) this.findViewById(R.id.imageView);
@@ -333,6 +332,17 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			beginOcr();
 		}
 	};
+
+	public void insertNewEvent(Calendar cal) {
+		Intent intent = new Intent(Intent.ACTION_INSERT)
+		.setData(Events.CONTENT_URI)
+		.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cal.getTimeInMillis())
+		.putExtra(Events.TITLE, "My Event on " + (cal.get(Calendar.MONTH)+1) + "/" + cal.get(Calendar.DAY_OF_MONTH))
+		//.putExtra(Events.DESCRIPTION, "Super cool thing")
+		//.putExtra(Events.EVENT_LOCATION, "CS 1240")
+		.putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
+		startActivity(intent);
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
