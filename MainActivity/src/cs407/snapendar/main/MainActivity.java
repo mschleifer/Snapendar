@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.IOException;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import android.app.Activity;
@@ -90,11 +91,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 			pushToast(getString(R.string.helptext));
 		}
 
-		Calendar calTest = Calendar.getInstance();
-		calTest.set(Calendar.YEAR, 2014);
 
-
-		Log.v("cal",calTest.toString());
 
 		/* Setup all the class members from the view objects*/
 		this.progressBar = (ProgressBar) this.findViewById(R.id.ocr_progressbar);
