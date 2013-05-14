@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Date;
 
 import android.media.ExifInterface;
 import android.os.Environment;
@@ -14,6 +15,7 @@ public class Storage {
 
 	private File snapendarDir;
 	public static String lastWrittenFile;
+	public static String lastRenamedFile;
 
 	public Storage(){
 		snapendarDir = new File(Environment.getExternalStorageDirectory(), "Snapendar/");
@@ -61,6 +63,8 @@ public class Storage {
 		
 		File toFile = new File(snapendarDir, to);
 		boolean status = fromFile.renameTo(toFile);
+		Storage.lastRenamedFile = to;
+		
 		Log.v("storage", "Rename status" + String.valueOf(status));
 		return status;
 	}
@@ -68,11 +72,14 @@ public class Storage {
 	public boolean setExifMilliseconds(String fileName, String ms){
 		File snapFile = new File(snapendarDir, fileName);
 		try{
-			ExifInterface eInterface = new ExifInterface(snapFile.getAbsolutePath());
+			ExifInterface eInterface = new ExifInterface(snapFile.getPath());
+			Log.v("storage","oldDateTime" +  eInterface.getAttribute(ExifInterface.TAG_DATETIME));
+			Date dt = new Date();
 			eInterface.setAttribute(ExifInterface.TAG_DATETIME, ms);
+			eInterface.saveAttributes();
 		}
 		catch(Exception e){
-			Log.v("storage", "Unable to set exif data");
+		//.v("storage", e.getLocalizedMessage());
 		}
 		
 		return false;
