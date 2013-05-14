@@ -94,11 +94,7 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 								"\nDay: " + chronicCalendar.get(Calendar.DAY_OF_MONTH));
 						try{
 							MainActivity.storage.renameFile(Storage.lastWrittenFile, String.valueOf(chronicCalendar.getTime().toLocaleString()));
-							//MainActivity.storage.setExifMilliseconds(Storage.lastRenamedFile, String.valueOf(chronicCalendar.getTimeInMillis()));
-
 							mainActivity.insertNewEvent(chronicCalendar, chronicDate.getBegin(), chronicDate.getEnd());
-
-
 						}
 						catch(Exception e){
 							Log.v("storage",e.toString());
