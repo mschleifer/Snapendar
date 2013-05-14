@@ -1,3 +1,7 @@
+/**
+ * Modified by Matthew Schleifer
+ * Original source code: https://github.com/samtingleff/jchronic
+ */
 package com.mdimension.jchronic;
 
 import java.text.ParseException;
@@ -161,6 +165,9 @@ public class Chronic {
     beginCal.set(year, month, day);
     endCal.set(year, month, day);
     Range r = new Range(beginCal.getTimeInMillis(), endCal.getTimeInMillis());
+    return r;
+    
+    /* Below code is from the original Chronic source code */
     /*List<Class> optionScannerClasses = new LinkedList<Class>();
     optionScannerClasses.add(Repeater.class);
     for (Class optionScannerClass : optionScannerClasses) {
@@ -205,9 +212,9 @@ public class Chronic {
     // guess a time within a span if required
     if (options.isGuess()) {
       span = guess(span);
-    }*/
+    }
 
-    return r;
+    return span;*/
   }
 
   /**

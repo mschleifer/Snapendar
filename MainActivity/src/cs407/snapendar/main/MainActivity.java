@@ -6,8 +6,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import android.app.Activity;
@@ -84,7 +82,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		storage = new Storage();
-		//storage.writeTestFile();
 
 		boolean hasRunBefore = storage.snapendarDirectoryExists();
 		if(!hasRunBefore){
@@ -119,7 +116,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		preview.setKeepScreenOn(true);
 
 		/* Setup the OnClickListeners for each button of the UI */
-
 		this.helpButton.setOnClickListener(new View.OnClickListener(){
 			public void onClick(View v){
 				pushToast(getString(R.string.helptext));
@@ -256,9 +252,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				// This gets the URI of the image the user selected
 				Uri imgUri = data.getData();
 
-
-				/* Convert the URI to a Bitmap we can store; may break if 
-				 * the image of the URI is large*/
+				/* Convert the URI to a Bitmap */
 				try {
 					InputStream input = this.getContentResolver().openInputStream(imgUri);
 
@@ -267,6 +261,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 					BitmapFactory.decodeStream(input, null, onlyBoundsOptions);
 					input.close();
 
+					/* If the selected image is greater than 640x480 then scale it */
 					if(onlyBoundsOptions.outWidth > 640 && onlyBoundsOptions.outWidth > 480) {
 						input = this.getContentResolver().openInputStream(imgUri);
 						photo = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(input, null, null),
@@ -288,6 +283,9 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		}
 	}
 
+	/**
+	 * Show/hide relevant UI elements and execute the OCR AsyncTask
+	 */
 	protected void beginOcr(){
 		shutterButton.setVisibility(View.GONE);
 		cameraFrame.setVisibility(View.GONE);
@@ -314,7 +312,6 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 
 			if(Storage.storageAccessible()) {
 				/* Write to External Storage */
-
 				storage.writeFile(String.format("SNPNDR_%d.jpg", System.currentTimeMillis()), data);
 
 				Log.d("snap", "onPictureTaken - wrote bytes: " + data.length);
@@ -330,14 +327,17 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		}
 	};
 
-	public void insertNewEvent(Calendar cal, long startTimeInMillis, long endTimeMillis) {
+	/**
+	 * Setup and start a new Intent to insert a new event into the user's calendar.
+	 * Availability of calendar Intent handler is guarenteed by Android platform.
+	 * @param startTimeInMillis Time in milliseconds when the event begins
+	 * @param endTimeMillis Time in milliseconds when the event ends
+	 */
+	public void insertNewEvent(long startTimeInMillis, long endTimeMillis) {
 		Intent intent = new Intent(Intent.ACTION_INSERT)
 		.setData(Events.CONTENT_URI)
 		.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTimeInMillis)
 		.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTimeMillis)
-		.putExtra(Events.TITLE, "My Event on " + (cal.get(Calendar.MONTH)+1) + "/" + cal.get(Calendar.DAY_OF_MONTH))
-		//.putExtra(Events.DESCRIPTION, "Super cool thing")
-		//.putExtra(Events.EVENT_LOCATION, "CS 1240")
 		.putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
 		startActivity(intent);
 	}
@@ -348,11 +348,18 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		return true;
 	}
 
+	/**
+	 * Restart the camera preview
+	 */
 	private void resetCam() {
 		camera.startPreview();
 		preview.setCamera(camera);
 	}
 
+	/**
+	 * Display Toast centered at the top of Activity for LENGTH_LONG
+	 * @param text Message displayed in the Toast
+	 */
 	public void pushToast(String text){
 		int duration = Toast.LENGTH_LONG;
 

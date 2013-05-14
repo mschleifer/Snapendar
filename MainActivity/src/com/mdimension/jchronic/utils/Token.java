@@ -1,3 +1,7 @@
+/**
+ * Modified by Matthew Schleifer
+ * Original source code: https://github.com/samtingleff/jchronic
+ */
 package com.mdimension.jchronic.utils;
 
 import java.text.DateFormat;
@@ -58,6 +62,10 @@ public class Token {
 	    return true;
   }
   
+  /**
+   * Determine if the Token can be parsed into hh:mm format
+   * @return True if it can be parsed as hh:mm
+   */
   public boolean isTime() {
 	  DateFormat sdf = new SimpleDateFormat("hh:mm");
 	  try {
@@ -72,6 +80,10 @@ public class Token {
 	  return (_word.equals("am") | _word.equals("pm"));
   }
   
+  /**
+   * Determine if the Token represents a Gregorian month
+   * @return True if it represents a month
+   */
   public boolean isMonth() {
 	  if(_word.equals("january") |
 		 _word.equals("february") |
@@ -90,6 +102,11 @@ public class Token {
 	  return false;
   }
   
+  /**
+   * Get the 0-indexed number associated with Gregorian month represented by
+   * the Token. Only applicable if the Token is a Gregorian month.
+   * @return 0-indexed int representing the month
+   */
   public int getMonthNumber() {
 	  if(_word.equals("january")) {
 		  return 0;

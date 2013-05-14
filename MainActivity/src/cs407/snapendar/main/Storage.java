@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Date;
+import java.util.Locale;
 
 import android.media.ExifInterface;
 import android.os.Environment;
@@ -74,7 +74,6 @@ public class Storage {
 		try{
 			ExifInterface eInterface = new ExifInterface(snapFile.getPath());
 			Log.v("storage","oldDateTime" +  eInterface.getAttribute(ExifInterface.TAG_DATETIME));
-			Date dt = new Date();
 			eInterface.setAttribute(ExifInterface.TAG_DATETIME, ms);
 			eInterface.saveAttributes();
 		}
@@ -136,7 +135,7 @@ public class Storage {
 
 		File[] files = snapendarDir.listFiles(new FilenameFilter() {
 		    public boolean accept(File dir, String name) {
-		        return name.toLowerCase().endsWith(".jpg");
+		        return name.toLowerCase(Locale.ENGLISH).endsWith(".jpg");
 		    }
 		});
 		return files;

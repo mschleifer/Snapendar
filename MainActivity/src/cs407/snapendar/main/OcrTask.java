@@ -1,6 +1,8 @@
 package cs407.snapendar.main;
 
 import java.io.ByteArrayOutputStream;
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -19,7 +21,6 @@ import android.view.View;
 
 import com.mdimension.jchronic.Chronic;
 import com.mdimension.jchronic.utils.Range;
-import com.mdimension.jchronic.utils.Span;
 
 public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 
@@ -36,9 +37,10 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 	}
 
 	protected AlertDialog.Builder doInBackground(Void... listTypes) {
-		// get image from photo Bitmap
+		/* Get the image as a byte array from the photo in MainActivity */
 		byte[] imageBytes = getImageByte(mainActivity.photo);
 		
+		/* Size check; Project Hawaii OCR won't accept images > 1.5 MB */
 		if(imageBytes.length >= 1572864) {
 			return new AlertDialog.Builder(mainActivity)
 				.setTitle("Size Warning")
@@ -51,6 +53,7 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 				});
 		}
 		
+		/* Send the data off for OCR; success will lead right to PostExecute */
 		try {
 			OcrService.recognizeImage(mainActivity.getBaseApplication().getClientIdentity(), imageBytes,
 					new OnCompleteListener<OcrServiceResult>() {
@@ -77,6 +80,8 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 			mainActivity.showErrorMessage(dialogBuilder);
 		} else {
 			mainActivity.resultContainer.setVisibility(View.VISIBLE);
+			
+			/* Successful OCR returns a non-empty list of OcrText objects */
 			List<OcrText> resultList = serviceResult.getOcrTexts();
 			if (resultList.size() > 0) {
 				String ocrResult = resultList.get(0).getText();
@@ -84,21 +89,25 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 				if (!Utility.isStringNullOrEmpty(ocrResult)) {
 					mainActivity.ocrResultView.setText(ocrResult);
 
+					/* Parse the text returned from OCR looking for a date */
 					Range chronicDate = Chronic.parse(ocrResult);
 					if(chronicDate != null) {
 						Calendar chronicCalendar;
 						chronicCalendar = Calendar.getInstance();
 						chronicCalendar.setTimeInMillis(chronicDate.getBegin());
-						mainActivity.ocrResultView.setText("Year: " + chronicCalendar.get(Calendar.YEAR) + 
-								"\nMonth: " + (chronicCalendar.get(Calendar.MONTH)+1) +
-								"\nDay: " + chronicCalendar.get(Calendar.DAY_OF_MONTH));
+						/* Show the user a nice string of the results we found */
+						mainActivity.ocrResultView.setText("Date: " 
+								+ new DateFormatSymbols().getMonths()[(chronicCalendar.get(Calendar.MONTH))] 
+								+ " " + chronicCalendar.get(Calendar.DAY_OF_MONTH) 
+								+ ", " + chronicCalendar.get(Calendar.YEAR)
+								+"\nTime: " + new SimpleDateFormat("hh:mm").format(chronicCalendar.getTime()));
 						try{
 							MainActivity.storage.renameFile(Storage.lastWrittenFile, String.valueOf(chronicCalendar.getTime().toLocaleString()));
-							mainActivity.insertNewEvent(chronicCalendar, chronicDate.getBegin(), chronicDate.getEnd());
 						}
 						catch(Exception e){
 							Log.v("storage",e.toString());
 						}
+						mainActivity.insertNewEvent(chronicDate.getBegin(), chronicDate.getEnd());
 					}
 					else {
 						mainActivity.showErrorMessage("Couldn't parse a date from specified image",
@@ -111,7 +120,8 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 				}
 			}
 		}
-
+		
+		/* Show the UI elements again */
 		mainActivity.progressBar.setVisibility(View.GONE);
 		mainActivity.backButton.setVisibility(View.VISIBLE);
 		mainActivity.buttonBar.setVisibility(View.VISIBLE);
