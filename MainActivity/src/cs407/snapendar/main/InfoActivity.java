@@ -5,10 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import cs407.snapendar.main.R;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -58,16 +60,34 @@ public class InfoActivity extends Activity {
 	   listOfDates.setPadding(55, 55, 55, 55);
 	   rootElement.addView(listOfDates);
 	   
-	   String[] snaps = MainActivity.storage.getSnaps();
+	   File [] snaps = MainActivity.storage.getSnaps();
+	   
+	   ArrayList<File> files = new ArrayList<File>();
+	   
+	   for(int x = 0; x < snaps.length;x++){
+		   try {
+			ExifInterface exif = new ExifInterface(snaps[x].getAbsolutePath());
+			int dateTime = exif.getAttributeInt(ExifInterface.TAG_DATETIME, 0);
+			Log.v("exif",String.valueOf(dateTime));
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		  // files.add();
+	   }
+	   
+	 
+	   
+	   
 	   
 	  // Log.v("info", "Files" + snaps.length);
 	   
 	    for (int x = 0; x < snaps.length; x++){
-
 		   TextView newView = new TextView(this);
 		   newView.setPadding(0, 0, 0, 25);
-		 //  newView.setLayoutParams(new TableRow.LayoutParams(200,400));
-		   newView.setText(snaps[x]);
+		   //newView.setLayoutParams(new TableRow.LayoutParams(200,400));
+		   newView.setText(snaps[x].getName());
 		   listOfDates.addView(newView);
 	   }   
 	}

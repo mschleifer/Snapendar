@@ -3,8 +3,10 @@ package cs407.snapendar.main;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 
+import android.media.ExifInterface;
 import android.os.Environment;
 import android.util.Log;
 
@@ -33,21 +35,47 @@ public class Storage {
 			outStream = new FileOutputStream(outputFile);
 			outStream.write(data);
 			outStream.close();
+			Storage.lastWrittenFile = filename;
 			return true;
 		} catch (FileNotFoundException ex) {
 			ex.printStackTrace();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-		Storage.lastWrittenFile = filename;
+		
 		return false;
 	}
 	
 	public  boolean renameFile(String from, String to){
+	
 		createStorageDirectory();
 		File fromFile = new File(snapendarDir,from);
-		File toFile = new File(snapendarDir,to);
-		return fromFile.renameTo(toFile);
+		Log.v("storage",fromFile.getAbsolutePath().toString());
+		
+		Log.v("storage", "space taken: " + fromFile.getTotalSpace());
+		
+		to = to.replace(',', ' ');
+		to = to.replace(':', '-');
+		to += ".jpg";
+		Log.v("storage", "Trying to rename" + from + " to: " + to);
+		
+		File toFile = new File(snapendarDir, to);
+		boolean status = fromFile.renameTo(toFile);
+		Log.v("storage", "Rename status" + String.valueOf(status));
+		return status;
+	}
+	
+	public boolean setExifMilliseconds(String fileName, String ms){
+		File snapFile = new File(snapendarDir, fileName);
+		try{
+			ExifInterface eInterface = new ExifInterface(snapFile.getAbsolutePath());
+			eInterface.setAttribute(ExifInterface.TAG_DATETIME, ms);
+		}
+		catch(Exception e){
+			
+		}
+		
+		return false;
 	}
 
 	public void writeTestFile(){
@@ -97,8 +125,14 @@ public class Storage {
 		return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY);
 	}
 
-	public String[] getSnaps(){
-		return snapendarDir.list();
+	public File[] getSnaps(){
+
+		File[] files = snapendarDir.listFiles(new FilenameFilter() {
+		    public boolean accept(File dir, String name) {
+		        return name.toLowerCase().endsWith(".jpg");
+		    }
+		});
+		return files;
 	}
 
 	/**
