@@ -204,7 +204,7 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 				break;
 			}
 		}
-
+		parameters.set("orientation", "portrait");
 		camera.setParameters(parameters);
 
 		if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
@@ -333,10 +333,11 @@ public class MainActivity extends HawaiiBaseAuthActivity {
 		}
 	};
 
-	public void insertNewEvent(Calendar cal) {
+	public void insertNewEvent(Calendar cal, long startTimeInMillis, long endTimeMillis) {
 		Intent intent = new Intent(Intent.ACTION_INSERT)
 		.setData(Events.CONTENT_URI)
-		.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cal.getTimeInMillis())
+		.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTimeInMillis)
+		.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTimeMillis)
 		.putExtra(Events.TITLE, "My Event on " + (cal.get(Calendar.MONTH)+1) + "/" + cal.get(Calendar.DAY_OF_MONTH))
 		//.putExtra(Events.DESCRIPTION, "Super cool thing")
 		//.putExtra(Events.EVENT_LOCATION, "CS 1240")

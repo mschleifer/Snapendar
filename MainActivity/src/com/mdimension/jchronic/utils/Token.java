@@ -1,5 +1,8 @@
 package com.mdimension.jchronic.utils;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,6 +48,87 @@ public class Token {
   public boolean isTagged() {
     return !_tags.isEmpty();
   }
+  
+  public boolean isDigit() {
+	  try { 
+	        Integer.parseInt(_word); 
+	    } catch(NumberFormatException e) { 
+	        return false; 
+	    }
+	    return true;
+  }
+  
+  public boolean isTime() {
+	  DateFormat sdf = new SimpleDateFormat("hh:mm");
+	  try {
+		  sdf.parse(_word);
+	  } catch(ParseException ex) {
+		  return false;
+	  }
+	  return true;
+  }
+  
+  public boolean isAMPM() {
+	  return (_word.equals("am") | _word.equals("pm"));
+  }
+  
+  public boolean isMonth() {
+	  if(_word.equals("january") |
+		 _word.equals("february") |
+		 _word.equals("march") |
+		 _word.equals("april") |
+		 _word.equals("may") |
+		 _word.equals("june") |
+		 _word.equals("july") |
+		 _word.equals("august") |
+		 _word.equals("september") |
+		 _word.equals("october") |
+		 _word.equals("november") |
+		 _word.equals("december")) {
+		  return true;
+	  }
+	  return false;
+  }
+  
+  public int getMonthNumber() {
+	  if(_word.equals("january")) {
+		  return 0;
+	  }
+	  if(_word.equals("february")) {
+		  return 1;
+	  }
+	  if(_word.equals("march")) {
+		  return 2;
+	  }
+	  if(_word.equals("april")) {
+		  return 3;
+	  }
+	  if(_word.equals("may")) {
+		  return 4;
+	  }
+	  if(_word.equals("june")) {
+		  return 5;
+	  }
+	  if(_word.equals("july")) {
+		  return 6;
+	  }
+	  if(_word.equals("august")) {
+		  return 7;
+	  }
+	  if(_word.equals("september")) {
+		  return 8;
+	  }
+	  if(_word.equals("october")) {
+		  return 9;
+	  }
+	  if(_word.equals("november")) {
+		  return 10;
+	  }
+	  if(_word.equals("december")) {
+		  return 11;
+	  }
+	  return -1;
+}
 
   /**
    * Return the Tag that matches the given class

@@ -37,7 +37,7 @@ public class SRPHandler implements IHandler {
       throw new IllegalArgumentException("Invalid repeater: " + repeater);
     }
     */
-    Span span = Chronic.parse("this second", new Options(options.getNow(), false));
-    return handle(tokens, span, options);
+    //Span span = Chronic.parse("this second", new Options(options.getNow(), false));
+    return handle(tokens, null, options);
   }
 }

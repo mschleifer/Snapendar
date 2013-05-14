@@ -17,6 +17,7 @@ import android.os.AsyncTask;
 import android.view.View;
 
 import com.mdimension.jchronic.Chronic;
+import com.mdimension.jchronic.utils.Range;
 import com.mdimension.jchronic.utils.Span;
 
 public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
@@ -81,16 +82,17 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 				if (!Utility.isStringNullOrEmpty(ocrResult)) {
 					mainActivity.ocrResultView.setText(ocrResult);
 
-					Span chronicDate = Chronic.parse(ocrResult);
+					Range chronicDate = Chronic.parse(ocrResult);
 					if(chronicDate != null) {
 						Calendar chronicCalendar;
-						chronicCalendar = chronicDate.getBeginCalendar();
+						chronicCalendar = Calendar.getInstance();
+						chronicCalendar.setTimeInMillis(chronicDate.getBegin());
 						mainActivity.ocrResultView.setText("Year: " + chronicCalendar.get(Calendar.YEAR) + 
 								"\nMonth: " + (chronicCalendar.get(Calendar.MONTH)+1) +
 								"\nDay: " + chronicCalendar.get(Calendar.DAY_OF_MONTH));
 						//TODO: Throwing a null pointer exception in some cases
 						//MainActivity.storage.renameFile(Storage.lastWrittenFile, String.valueOf(chronicCalendar.getTimeInMillis()));
-						mainActivity.insertNewEvent(chronicCalendar);
+						mainActivity.insertNewEvent(chronicCalendar, chronicDate.getBegin(), chronicDate.getEnd());
 					}
 					else {
 						mainActivity.showErrorMessage("Couldn't parse a date from specified image",

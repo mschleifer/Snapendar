@@ -1,5 +1,9 @@
 package com.mdimension.jchronic;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,6 +16,7 @@ import com.mdimension.jchronic.tags.Pointer;
 import com.mdimension.jchronic.tags.Scalar;
 import com.mdimension.jchronic.tags.Separator;
 import com.mdimension.jchronic.tags.TimeZone;
+import com.mdimension.jchronic.utils.Range;
 import com.mdimension.jchronic.utils.Span;
 import com.mdimension.jchronic.utils.Token;
 
@@ -22,7 +27,7 @@ public class Chronic {
     // DO NOTHING
   }
 
-  public static Span parse(String text) {
+  public static Range parse(String text) {
     return Chronic.parse(text, new Options());
   }
 
@@ -66,7 +71,7 @@ public class Chronic {
    *     be used.
    */
   @SuppressWarnings("unchecked")
-  public static Span parse(String text, Options options) {
+  public static Range parse(String text, Options options) {
     // store now for later =)
     //_now = options.getNow();
 
@@ -75,8 +80,88 @@ public class Chronic {
 
     // get base tokens for each word
     List<Token> tokens = Chronic.baseTokenize(normalizedText);
+    Span span;
+    int month = -1;
+    int day = -1;
+    Date begin = null;
+    Date end = null;
+    for(int i = 0; i < tokens.size(); i++) {
+    	Token t = tokens.get(i);
+    	if(t.isMonth()) {
+    		month = t.getMonthNumber();
+    		for(int j = i; j < tokens.size(); j++) {
+    			Token k = tokens.get(j);
+    			if(k.isDigit()) {
+    				day = Integer.parseInt(k.getWord());
+    				break;
+    			}
+    		}
+    	}
+    	
+    	if(t.isTime() && begin == null) {
+    		try{
+    			begin = new SimpleDateFormat("hh:mm").parse(t.getWord());
+    			for(int j = i+1; j < tokens.size(); j++) {
+        			Token k = tokens.get(j);
+        			if(k.isTime()) {
+        				end = new SimpleDateFormat("hh:mm").parse(k.getWord());
+        				break;
+        			}
+        		}
+    		} catch(ParseException ex) {
+    			ex.printStackTrace();
+    		}
+    	}
+    	
+    	if(t.isAMPM() && begin == null) {
+    		Token k = tokens.get(i-1);
+    		if(k.isDigit()) {
+    			begin = new Date(2013, 1, 1, Integer.parseInt(k.getWord()), 0);
+    		}
+    		else {
+    			k = tokens.get(i-2);
+        		if(k.isDigit()) {
+        			begin = new Date(2013, 1, 1, Integer.parseInt(k.getWord()), 0);
+        		}
+    		}
+    	}
+    	else if(t.isAMPM() && begin != null) {
+    		Token k = tokens.get(i-1);
+    		if(k.isDigit()) {
+    			end = new Date(2013, 1, 1, Integer.parseInt(k.getWord()), 0);
+    		}
+    		else {
+    			k = tokens.get(i-2);
+        		if(k.isDigit()) {
+        			end = new Date(2013, 1, 1, Integer.parseInt(k.getWord()), 0);
+        		}
+    		}
+    	}
+    }
+    if(begin == null) {
+    	begin = new Date(2013, 1, 1, 12, 0);
+    }
+    if(end ==  null) {
+    	end = new Date(2013, 1, 1, begin.getHours()+1, 0);
+    }
+    
+    Calendar beginCal = Calendar.getInstance();
+    Calendar endCal = Calendar.getInstance();
+    int year = beginCal.get(Calendar.YEAR);
+    
+    if(begin.getHours() < 9) {
+    	begin.setTime(begin.getTime()+43200000);
+    }
+    if(end.getHours() < 9) {
+    	end.setTime(end.getTime()+43200000);
+    }
+    beginCal.setTimeInMillis(begin.getTime());
+    endCal.setTimeInMillis(end.getTime());
 
-    List<Class> optionScannerClasses = new LinkedList<Class>();
+    beginCal.set(year, month, day);
+    endCal.set(year, month, day);
+    Range r = new Range(beginCal.getTimeInMillis(), endCal.getTimeInMillis());
+    /*List<Class> optionScannerClasses = new LinkedList<Class>();
     optionScannerClasses.add(Repeater.class);
     for (Class optionScannerClass : optionScannerClasses) {
       try {
@@ -120,9 +205,9 @@ public class Chronic {
     // guess a time within a span if required
     if (options.isGuess()) {
       span = guess(span);
-    }
+    }*/
 
-    return span;
+    return r;
   }
 
   /**
