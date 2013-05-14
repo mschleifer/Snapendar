@@ -72,7 +72,7 @@ public class Storage {
 			eInterface.setAttribute(ExifInterface.TAG_DATETIME, ms);
 		}
 		catch(Exception e){
-			
+			Log.v("storage", "Unable to set exif data");
 		}
 		
 		return false;

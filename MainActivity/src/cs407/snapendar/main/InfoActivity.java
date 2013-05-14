@@ -64,6 +64,7 @@ public class InfoActivity extends Activity {
 	   
 	   ArrayList<File> files = new ArrayList<File>();
 	   
+	   
 	   for(int x = 0; x < snaps.length;x++){
 		   try {
 			ExifInterface exif = new ExifInterface(snaps[x].getAbsolutePath());
