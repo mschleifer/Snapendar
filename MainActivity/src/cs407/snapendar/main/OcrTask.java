@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 
 import com.mdimension.jchronic.Chronic;
@@ -78,6 +79,7 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 			List<OcrText> resultList = serviceResult.getOcrTexts();
 			if (resultList.size() > 0) {
 				String ocrResult = resultList.get(0).getText();
+				
 				if (!Utility.isStringNullOrEmpty(ocrResult)) {
 					mainActivity.ocrResultView.setText(ocrResult);
 
@@ -89,8 +91,14 @@ public class OcrTask extends AsyncTask<Void, Integer, AlertDialog.Builder> {
 								"\nMonth: " + (chronicCalendar.get(Calendar.MONTH)+1) +
 								"\nDay: " + chronicCalendar.get(Calendar.DAY_OF_MONTH));
 						//TODO: Throwing a null pointer exception in some cases
-						//MainActivity.storage.renameFile(Storage.lastWrittenFile, String.valueOf(chronicCalendar.getTimeInMillis()));
-						mainActivity.insertNewEvent(chronicCalendar);
+						try{
+							MainActivity.storage.renameFile(Storage.lastWrittenFile, String.valueOf(chronicCalendar.getTime().toLocaleString()));
+							//MainActivity.storage.setExifMilliseconds(Storage.lastWrittenFile, String.valueOf(chronicCalendar.getTimeInMillis()));
+							//mainActivity.insertNewEvent(chronicCalendar);
+						}
+						catch(Exception e){
+							Log.v("storage",e.toString());
+						}
 					}
 					else {
 						mainActivity.showErrorMessage("Couldn't parse a date from specified image",
